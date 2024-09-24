@@ -1,0 +1,70 @@
+.woopq-quantity {
+    height: auto !important;
+}
+
+.woopq-quantity-input {
+    display: flex;
+    align-items: center;
+}
+
+.woopq-quantity-plus-minus .plus, .woopq-quantity-plus-minus .minus, .woopq-quantity-plus-minus .btn-plus, .woopq-quantity-plus-minus .btn-minus {
+    display: none !important;
+}
+
+.woopq-quantity-input-plus, .woopq-quantity-input-minus {
+    width: 40px;
+    height: 40px;
+    line-height: 38px;
+    text-align: center;
+    cursor: pointer;
+    background-color: #fefefe;
+    border: 1px solid #e5e5e5;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.woopq-quantity-input-plus:hover, .woopq-quantity-input-minus:hover {
+    background-color: #f0f0f0;
+}
+
+.woopq-quantity-input .qty {
+    width: 40px;
+    height: 40px;
+    line-height: 38px;
+    padding: 0 10px;
+    margin: 0;
+    box-shadow: none;
+    border-width: 1px 0;
+    border-style: solid;
+    border-color: #e5e5e5;
+    background-color: #fefefe;
+}
+
+.woopq-quantity-input input::-webkit-outer-spin-button, .woopq-quantity-input input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.woopq-quantity-input input[type=number] {
+    -moz-appearance: textfield;
+}
+
+.woopq-disabled {
+    opacity: .5 !important;
+    pointer-events: none !important;
+    cursor: not-allowed !important;
+}
+
+.woopq-atc-disabled {
+    opacity: .5 !important;
+    pointer-events: none !important;
+    cursor: not-allowed !important;
+}
+
+.woopq-type-radio label {
+    display: block;
+}
