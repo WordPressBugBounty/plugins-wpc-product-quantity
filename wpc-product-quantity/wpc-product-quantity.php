@@ -3,21 +3,23 @@
 Plugin Name: WPC Product Quantity for WooCommerce
 Plugin URI: https://wpclever.net/
 Description: WPC Product Quantity provides powerful controls for product quantity.
-Version: 5.0.4
+Version: 5.0.5
 Author: WPClever
 Author URI: https://wpclever.net
 Text Domain: wpc-product-quantity
 Domain Path: /languages/
 Requires Plugins: woocommerce
 Requires at least: 4.0
-Tested up to: 6.6
+Tested up to: 6.7
 WC requires at least: 3.0
-WC tested up to: 9.3
+WC tested up to: 9.4
+License: GPLv2 or later
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
 */
 
 defined( 'ABSPATH' ) || exit;
 
-! defined( 'WOOPQ_VERSION' ) && define( 'WOOPQ_VERSION', '5.0.4' );
+! defined( 'WOOPQ_VERSION' ) && define( 'WOOPQ_VERSION', '5.0.5' );
 ! defined( 'WOOPQ_LITE' ) && define( 'WOOPQ_LITE', __FILE__ );
 ! defined( 'WOOPQ_FILE' ) && define( 'WOOPQ_FILE', __FILE__ );
 ! defined( 'WOOPQ_URI' ) && define( 'WOOPQ_URI', plugin_dir_url( __FILE__ ) );
@@ -36,9 +38,6 @@ if ( ! function_exists( 'woopq_init' ) ) {
 	add_action( 'plugins_loaded', 'woopq_init', 11 );
 
 	function woopq_init() {
-		// load text-domain
-		load_plugin_textdomain( 'wpc-product-quantity', false, basename( __DIR__ ) . '/languages/' );
-
 		if ( ! function_exists( 'WC' ) || ! version_compare( WC()->version, '3.0', '>=' ) ) {
 			add_action( 'admin_notices', 'woopq_notice_wc' );
 
@@ -60,6 +59,8 @@ if ( ! function_exists( 'woopq_init' ) ) {
 
 				function __construct() {
 					self::$settings = (array) get_option( 'woopq_settings', [] );
+
+					add_action( 'init', [ $this, 'init' ] );
 
 					// enqueue backend
 					add_action( 'admin_enqueue_scripts', [ $this, 'admin_enqueue_scripts' ], 99 );
@@ -136,6 +137,11 @@ if ( ! function_exists( 'woopq_init' ) ) {
 
 					// WPC Variation Bulk Editor
 					add_action( 'wpcvb_bulk_update_variation', [ $this, 'bulk_update_variation' ], 99, 2 );
+				}
+
+				function init() {
+					// load text-domain
+					load_plugin_textdomain( 'wpc-product-quantity', false, basename( WOOPQ_DIR ) . '/languages/' );
 				}
 
 				public static function get_settings() {

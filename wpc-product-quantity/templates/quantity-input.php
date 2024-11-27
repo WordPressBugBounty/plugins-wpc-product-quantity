@@ -3,7 +3,7 @@
  * Product quantity inputs
  * @see     https://docs.woocommerce.com/document/template-structure/
  * @package WooCommerce\Templates
- * @version 7.8.0
+ * @version 9.4.0
  * @var $product_id
  * @var $step
  * @var $input_id
