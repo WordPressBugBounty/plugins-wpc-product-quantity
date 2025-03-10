@@ -106,7 +106,8 @@ if ( $max_value && $min_value == $max_value ) {
 	<?php if ( $woopq_type === 'select' ) {
 		do_action( 'woopq_before_select_field' );
 		?>
-        <select id="<?php echo esc_attr( $input_id ); ?>" name="<?php echo esc_attr( $input_name ); ?>" class="qty" title="<?php echo esc_attr_x( 'Qty', 'Product quantity input tooltip', 'wpc-product-quantity' ); ?>">
+        <select id="<?php echo esc_attr( $input_id ); ?>" name="<?php echo esc_attr( $input_name ); ?>" class="qty"
+                title="<?php echo esc_attr_x( 'Qty', 'Product quantity input tooltip', 'wpc-product-quantity' ); ?>">
 			<?php
 			$woopq_values = WPCleverWoopq()->get_values( $product_id );
 			$s            = 1;
@@ -140,7 +141,14 @@ if ( $max_value && $min_value == $max_value ) {
 			echo '<div class="woopq-quantity-input-minus">-</div>';
 		}
 		?>
-        <input type="<?php echo esc_attr( $type ); ?>" <?php echo $readonly ? 'readonly="readonly"' : ''; ?> size="4" id="<?php echo esc_attr( $input_id ); ?>" class="<?php echo esc_attr( join( ' ', (array) $classes ) ); ?>" step="<?php echo esc_attr( $step ); ?>" min="<?php echo esc_attr( $min_value ); ?>" max="<?php echo esc_attr( 0 < $max_value ? $max_value : '' ); ?>" name="<?php echo esc_attr( $input_name ); ?>" value="<?php echo esc_attr( $input_value ); ?>" title="<?php echo esc_attr_x( 'Qty', 'Product quantity input tooltip', 'wpc-product-quantity' ); ?>" placeholder="<?php echo esc_attr( $placeholder ); ?>" inputmode="<?php echo esc_attr( $inputmode ); ?>"/>
+        <input type="<?php echo esc_attr( $type ); ?>" <?php echo $readonly ? 'readonly="readonly"' : ''; ?> size="4"
+               id="<?php echo esc_attr( $input_id ); ?>"
+               class="<?php echo esc_attr( join( ' ', (array) $classes ) ); ?>" step="<?php echo esc_attr( $step ); ?>"
+               min="<?php echo esc_attr( $min_value ); ?>"
+               max="<?php echo esc_attr( 0 < $max_value ? $max_value : '' ); ?>"
+               name="<?php echo esc_attr( $input_name ); ?>" value="<?php echo esc_attr( $input_value ); ?>"
+               title="<?php echo esc_attr_x( 'Qty', 'Product quantity input tooltip', 'wpc-product-quantity' ); ?>"
+               placeholder="<?php echo esc_attr( $placeholder ); ?>" inputmode="<?php echo esc_attr( $inputmode ); ?>"/>
 		<?php
 		if ( $plus_minus ) {
 			echo '<div class="woopq-quantity-input-plus">+</div>';

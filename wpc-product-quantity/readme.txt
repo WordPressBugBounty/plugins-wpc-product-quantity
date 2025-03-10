@@ -2,10 +2,9 @@
 Contributors: wpclever
 Donate link: https://wpclever.net
 Tags: woocommerce, wpc, quantity, qty
-Requires at least: 4.0
 Tested up to: 6.7
-Version: 5.0.6
-Stable tag: 5.0.6
+Version: 5.0.7
+Stable tag: 5.0.7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -96,6 +95,10 @@ Please try other plugins from us:
 4. Go to WPClever > Product Quantity to make your customization
 
 == Changelog ==
+
+= 5.0.7 =
+* Updated: Optimized the code
+* Updated: Compatible with WP 6.7 & Woo 9.7
 
 = 5.0.6 =
 * Updated: Optimized the code
