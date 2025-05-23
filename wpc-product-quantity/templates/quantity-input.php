@@ -17,31 +17,24 @@
 
 defined( 'ABSPATH' ) || exit;
 
-if ( isset( $woosb_qty ) ) {
-	// overwrite by WPC Product Bundles
-	$min_value   = $woosb_qty['min_value'];
-	$max_value   = $woosb_qty['max_value'];
-	$input_value = $woosb_qty['input_value'];
-} elseif ( isset( $woobt_qty ) ) {
-	// overwrite by WPC Frequently Bought Together
-	$min_value   = $woobt_qty['min_value'];
-	$max_value   = $woobt_qty['max_value'];
-	$input_value = $woobt_qty['input_value'];
-} elseif ( isset( $woosg_qty ) ) {
-	// overwrite by WPC Grouped Product
-	$min_value   = $woosg_qty['min_value'];
-	$max_value   = $woosg_qty['max_value'];
-	$input_value = $woosg_qty['input_value'];
-} elseif ( isset( $overwrite_qty ) ) {
-	// overwrite by filter
-	$min_value   = $overwrite_qty['min_value'];
-	$max_value   = $overwrite_qty['max_value'];
-	$input_value = $overwrite_qty['input_value'];
+$qty_sources = [
+	'woosb_qty'     => 'WPC Product Bundles',
+	'woobt_qty'     => 'WPC Frequently Bought Together',
+	'woosg_qty'     => 'WPC Grouped Product',
+	'overwrite_qty' => 'Overwrite'
+];
+
+foreach ( $qty_sources as $source => $comment ) {
+	if ( isset( $$source ) ) {
+		$min_value   = ${$source}['min_value'];
+		$max_value   = ${$source}['max_value'];
+		$input_value = ${$source}['input_value'];
+		break;
+	}
 }
 
+$plus_minus    = WPCleverWoopq()::get_setting( 'plus_minus', 'hide' ) === 'show';
 $default_value = $input_value;
-
-$plus_minus = WPCleverWoopq()::get_setting( 'plus_minus', 'hide' ) === 'show';
 
 do_action( 'woopq_before_wrap' );
 
@@ -61,19 +54,9 @@ if ( $max_value && $min_value == $max_value ) {
 	do_action( 'woopq_after_hidden_field' );
 	echo '</div><!-- /woopq-quantity-hidden -->';
 } else {
-	$type = 'number';
-
-	if ( $min_value && ( $input_value < $min_value ) ) {
-		$input_value = $min_value;
-	}
-
-	if ( $max_value && ( $input_value > $max_value ) ) {
-		$input_value = $max_value;
-	}
-
-	$label = ! empty( $args['product_name'] ) ? sprintf( /* translators: product name */ esc_html__( '%s quantity', 'wpc-product-quantity' ), wp_strip_all_tags( $args['product_name'] ) ) : esc_html__( 'Quantity', 'wpc-product-quantity' );
-
-	// $product_id from woopq_quantity_input_args()
+	$type           = 'number';
+	$input_value    = max( $min_value ?: $input_value, min( $max_value ?: $input_value, $input_value ) );
+	$label          = ! empty( $args['product_name'] ) ? sprintf( /* translators: product name */ esc_html__( '%s quantity', 'wpc-product-quantity' ), wp_strip_all_tags( $args['product_name'] ) ) : esc_html__( 'Quantity', 'wpc-product-quantity' );
 	$woopq_quantity = WPCleverWoopq()->get_quantity( $product_id );
 	$woopq_type     = WPCleverWoopq()->get_type( $product_id );
 

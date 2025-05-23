@@ -3,23 +3,23 @@
 Plugin Name: WPC Product Quantity for WooCommerce
 Plugin URI: https://wpclever.net/
 Description: WPC Product Quantity provides powerful controls for product quantity.
-Version: 5.0.7
+Version: 5.0.8
 Author: WPClever
 Author URI: https://wpclever.net
 Text Domain: wpc-product-quantity
 Domain Path: /languages/
 Requires Plugins: woocommerce
 Requires at least: 4.0
-Tested up to: 6.7
+Tested up to: 6.8
 WC requires at least: 3.0
-WC tested up to: 9.7
+WC tested up to: 9.8
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 */
 
 defined( 'ABSPATH' ) || exit;
 
-! defined( 'WOOPQ_VERSION' ) && define( 'WOOPQ_VERSION', '5.0.7' );
+! defined( 'WOOPQ_VERSION' ) && define( 'WOOPQ_VERSION', '5.0.8' );
 ! defined( 'WOOPQ_LITE' ) && define( 'WOOPQ_LITE', __FILE__ );
 ! defined( 'WOOPQ_FILE' ) && define( 'WOOPQ_FILE', __FILE__ );
 ! defined( 'WOOPQ_URI' ) && define( 'WOOPQ_URI', plugin_dir_url( __FILE__ ) );
@@ -150,11 +150,7 @@ if ( ! function_exists( 'woopq_init' ) ) {
 				}
 
 				public static function get_setting( $name, $default = false ) {
-					if ( ! empty( self::$settings ) && isset( self::$settings[ $name ] ) ) {
-						$setting = self::$settings[ $name ];
-					} else {
-						$setting = get_option( '_woopq_' . $name, $default );
-					}
+					$setting = self::$settings[ $name ] ?? get_option( 'woopq_' . $name, $default );
 
 					return apply_filters( 'woopq_get_setting', $setting, $name, $default );
 				}
