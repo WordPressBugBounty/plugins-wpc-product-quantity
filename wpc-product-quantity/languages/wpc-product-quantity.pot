@@ -2,14 +2,14 @@
 # This file is distributed under the GPLv2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: WPC Product Quantity for WooCommerce 5.0.8\n"
+"Project-Id-Version: WPC Product Quantity for WooCommerce 5.0.9\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/wpc-product-quantity\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-05-23T15:02:15+00:00\n"
+"POT-Creation-Date: 2025-06-23T03:39:17+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.11.0\n"
 "X-Domain: wpc-product-quantity\n"
@@ -58,7 +58,7 @@ msgid "Qty"
 msgstr ""
 
 #: wpc-product-quantity.php:189
-#: wpc-product-quantity.php:199
+#: wpc-product-quantity.php:203
 #: wpc-product-quantity.php:1572
 msgid "WPC Product Quantity"
 msgstr ""
@@ -67,42 +67,42 @@ msgstr ""
 msgid "Product Quantity"
 msgstr ""
 
-#: wpc-product-quantity.php:199
+#: wpc-product-quantity.php:203
 msgid "Premium"
 msgstr ""
 
 #. translators: stars
-#: wpc-product-quantity.php:202
+#: wpc-product-quantity.php:206
 msgid "Thank you for using our plugin! If you are satisfied, please reward it a full five-star %s rating."
 msgstr ""
 
-#: wpc-product-quantity.php:205
+#: wpc-product-quantity.php:209
 msgid "Reviews"
 msgstr ""
 
-#: wpc-product-quantity.php:207
+#: wpc-product-quantity.php:212
 msgid "Changelog"
 msgstr ""
 
-#: wpc-product-quantity.php:209
+#: wpc-product-quantity.php:215
 msgid "Discussion"
 msgstr ""
 
-#: wpc-product-quantity.php:214
+#: wpc-product-quantity.php:223
 msgid "Settings updated."
 msgstr ""
 
-#: wpc-product-quantity.php:221
+#: wpc-product-quantity.php:230
 #: wpc-product-quantity.php:726
 msgid "Settings"
 msgstr ""
 
-#: wpc-product-quantity.php:226
+#: wpc-product-quantity.php:235
 #: wpc-product-quantity.php:727
 msgid "Premium Version"
 msgstr ""
 
-#: wpc-product-quantity.php:230
+#: wpc-product-quantity.php:239
 msgid "Essential Kit"
 msgstr ""
 

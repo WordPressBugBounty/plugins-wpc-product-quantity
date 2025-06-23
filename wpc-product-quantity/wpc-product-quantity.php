@@ -3,7 +3,7 @@
 Plugin Name: WPC Product Quantity for WooCommerce
 Plugin URI: https://wpclever.net/
 Description: WPC Product Quantity provides powerful controls for product quantity.
-Version: 5.0.8
+Version: 5.0.9
 Author: WPClever
 Author URI: https://wpclever.net
 Text Domain: wpc-product-quantity
@@ -12,14 +12,14 @@ Requires Plugins: woocommerce
 Requires at least: 4.0
 Tested up to: 6.8
 WC requires at least: 3.0
-WC tested up to: 9.8
+WC tested up to: 9.9
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 */
 
 defined( 'ABSPATH' ) || exit;
 
-! defined( 'WOOPQ_VERSION' ) && define( 'WOOPQ_VERSION', '5.0.8' );
+! defined( 'WOOPQ_VERSION' ) && define( 'WOOPQ_VERSION', '5.0.9' );
 ! defined( 'WOOPQ_LITE' ) && define( 'WOOPQ_LITE', __FILE__ );
 ! defined( 'WOOPQ_FILE' ) && define( 'WOOPQ_FILE', __FILE__ );
 ! defined( 'WOOPQ_URI' ) && define( 'WOOPQ_URI', plugin_dir_url( __FILE__ ) );
@@ -196,19 +196,28 @@ if ( ! function_exists( 'woopq_init' ) ) {
 					$active_tab = sanitize_key( $_GET['tab'] ?? 'settings' );
 					?>
                     <div class="wpclever_settings_page wrap">
-                        <h1 class="wpclever_settings_page_title"><?php echo esc_html__( 'WPC Product Quantity', 'wpc-product-quantity' ) . ' ' . esc_html( WOOPQ_VERSION ) . ' ' . ( defined( 'WOOPQ_PREMIUM' ) ? '<span class="premium" style="display: none">' . esc_html__( 'Premium', 'wpc-product-quantity' ) . '</span>' : '' ); ?></h1>
-                        <div class="wpclever_settings_page_desc about-text">
-                            <p>
-								<?php printf( /* translators: stars */ esc_html__( 'Thank you for using our plugin! If you are satisfied, please reward it a full five-star %s rating.', 'wpc-product-quantity' ), '<span style="color:#ffb900">&#9733;&#9733;&#9733;&#9733;&#9733;</span>' ); ?>
-                                <br/>
-                                <a href="<?php echo esc_url( WOOPQ_REVIEWS ); ?>"
-                                   target="_blank"><?php esc_html_e( 'Reviews', 'wpc-product-quantity' ); ?></a> |
-                                <a href="<?php echo esc_url( WOOPQ_CHANGELOG ); ?>"
-                                   target="_blank"><?php esc_html_e( 'Changelog', 'wpc-product-quantity' ); ?></a> |
-                                <a href="<?php echo esc_url( WOOPQ_DISCUSSION ); ?>"
-                                   target="_blank"><?php esc_html_e( 'Discussion', 'wpc-product-quantity' ); ?></a>
-                            </p>
+                        <div class="wpclever_settings_page_header">
+                            <a class="wpclever_settings_page_header_logo" href="https://wpclever.net/"
+                               target="_blank" title="Visit wpclever.net"></a>
+                            <div class="wpclever_settings_page_header_text">
+                                <div class="wpclever_settings_page_title"><?php echo esc_html__( 'WPC Product Quantity', 'wpc-product-quantity' ) . ' ' . esc_html( WOOPQ_VERSION ) . ' ' . ( defined( 'WOOPQ_PREMIUM' ) ? '<span class="premium" style="display: none">' . esc_html__( 'Premium', 'wpc-product-quantity' ) . '</span>' : '' ); ?></div>
+                                <div class="wpclever_settings_page_desc about-text">
+                                    <p>
+										<?php printf( /* translators: stars */ esc_html__( 'Thank you for using our plugin! If you are satisfied, please reward it a full five-star %s rating.', 'wpc-product-quantity' ), '<span style="color:#ffb900">&#9733;&#9733;&#9733;&#9733;&#9733;</span>' ); ?>
+                                        <br/>
+                                        <a href="<?php echo esc_url( WOOPQ_REVIEWS ); ?>"
+                                           target="_blank"><?php esc_html_e( 'Reviews', 'wpc-product-quantity' ); ?></a>
+                                        |
+                                        <a href="<?php echo esc_url( WOOPQ_CHANGELOG ); ?>"
+                                           target="_blank"><?php esc_html_e( 'Changelog', 'wpc-product-quantity' ); ?></a>
+                                        |
+                                        <a href="<?php echo esc_url( WOOPQ_DISCUSSION ); ?>"
+                                           target="_blank"><?php esc_html_e( 'Discussion', 'wpc-product-quantity' ); ?></a>
+                                    </p>
+                                </div>
+                            </div>
                         </div>
+                        <h2></h2>
 						<?php if ( isset( $_GET['settings-updated'] ) && $_GET['settings-updated'] ) { ?>
                             <div class="notice notice-success is-dismissible">
                                 <p><?php esc_html_e( 'Settings updated.', 'wpc-product-quantity' ); ?></p>
@@ -233,15 +242,6 @@ if ( ! function_exists( 'woopq_init' ) ) {
                         </div>
                         <div class="wpclever_settings_page_content">
 							<?php if ( $active_tab === 'settings' ) {
-								// update old settings
-								if ( isset( $_GET['settings-updated'] ) && $_GET['settings-updated'] ) {
-									if ( ! empty( self::$settings ) ) {
-										foreach ( self::$settings as $k => $s ) {
-											update_option( '_woopq_' . $k, $s );
-										}
-									}
-								}
-
 								$step         = self::get_setting( 'decimal', 'no' ) === 'yes' ? '0.000001' : '1';
 								$decimal      = self::get_setting( 'decimal', 'no' );
 								$plus_minus   = self::get_setting( 'plus_minus', 'hide' );
