@@ -3,7 +3,7 @@
 Plugin Name: WPC Product Quantity for WooCommerce
 Plugin URI: https://wpclever.net/
 Description: WPC Product Quantity provides powerful controls for product quantity.
-Version: 5.1.0
+Version: 5.1.1
 Author: WPClever
 Author URI: https://wpclever.net
 Text Domain: wpc-product-quantity
@@ -12,14 +12,14 @@ Requires Plugins: woocommerce
 Requires at least: 4.0
 Tested up to: 6.8
 WC requires at least: 3.0
-WC tested up to: 10.0
+WC tested up to: 10.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 */
 
 defined( 'ABSPATH' ) || exit;
 
-! defined( 'WOOPQ_VERSION' ) && define( 'WOOPQ_VERSION', '5.1.0' );
+! defined( 'WOOPQ_VERSION' ) && define( 'WOOPQ_VERSION', '5.1.1' );
 ! defined( 'WOOPQ_LITE' ) && define( 'WOOPQ_LITE', __FILE__ );
 ! defined( 'WOOPQ_FILE' ) && define( 'WOOPQ_FILE', __FILE__ );
 ! defined( 'WOOPQ_URI' ) && define( 'WOOPQ_URI', plugin_dir_url( __FILE__ ) );
@@ -81,9 +81,9 @@ if ( ! function_exists( 'woopq_init' ) ) {
 					add_filter( 'woocommerce_loop_add_to_cart_args', [ $this, 'loop_add_to_cart_args' ], 99, 2 );
 
 					// default input
-					add_filter( 'woocommerce_quantity_input_min', [ $this, 'quantity_input_min' ], 99, 2 );
-					add_filter( 'woocommerce_quantity_input_max', [ $this, 'quantity_input_max' ], 99, 2 );
-					add_filter( 'woocommerce_quantity_input_step', [ $this, 'quantity_input_step' ], 99, 2 );
+					//add_filter( 'woocommerce_quantity_input_min', [ $this, 'quantity_input_min' ], 99, 2 );
+					//add_filter( 'woocommerce_quantity_input_max', [ $this, 'quantity_input_max' ], 99, 2 );
+					//add_filter( 'woocommerce_quantity_input_step', [ $this, 'quantity_input_step' ], 99, 2 );
 
 					// admin input
 					add_filter( 'woocommerce_quantity_input_min_admin', [ $this, 'quantity_input_min_admin' ], 99, 2 );
