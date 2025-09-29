@@ -3,8 +3,8 @@ Contributors: wpclever
 Donate link: https://wpclever.net
 Tags: woocommerce, wpc, quantity, qty
 Tested up to: 6.8
-Version: 5.1.1
-Stable tag: 5.1.1
+Version: 5.1.2
+Stable tag: 5.1.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -37,7 +37,7 @@ Wanna save your precious time working on variations? Try our brand-new free plug
 
 = Practical Uses =
 
-Consider the following practical cases when you will need the great help of WPC Product Quantity plugin:
+Consider the following practical cases when you need the great help of WPC Product Quantity plugin:
 
 - (1) Your store sells multiples of the same products at once.
 - (2) Sell fractional products that can be bought using decimal quantity.
@@ -49,7 +49,7 @@ Consider the following practical cases when you will need the great help of WPC 
 - (8) Sell a set of items as a composite product with a promotional price.
 - (9) Sell various items at once as frequently bought together deal with complex quantity options.
 
-In general, WPC Product Quantity helps store owners manage any kind of product quantity to be sold, whether it is a very huge number like 1000 pieces or very small ones (including decimal numbers) 0.1 m, 0.2 l, 0.5 kg. Especially, when the gap between different choices is bigger than the normal “1” gap, i.e. when you need to configure options for buying a group of 5 items you will need to set up the step as 5, so that will increase accordingly as 5, 10, 15, 20, 25 and on.
+In general, WPC Product Quantity helps store owners manage any kind of product quantity to be sold, whether it is a very huge number like 1000 pieces or tiny ones (including decimal numbers) 0.1 m, 0.2 l, 0.5 kg. Especially when the gap between different choices is bigger than the normal “1” gap, i.e. when you need to configure options for buying a group of 5 items, you will need to set up the step as 5, so that will increase accordingly as 5, 10, 15, 20, 25 and on.
 
 **Total Control over the Product Quantity**
 
@@ -59,23 +59,23 @@ To be specific, like there are some customers who buy 50 or 100 items at one tim
 
 For case (4): In case your store sells items that must be bought in pairs, such as T-shirts for couples, shoes, sandals, but you’d like to display the price for a single item, so you will need to set the minimum quantity to 2 and the step to 2, too. Sometimes, you might want to promote the sale of a newly arrived product, you can give a 10% discount for each set of three by setting the default minimum quantity to 3 and set the step value to 3. It’s to ensure that buyers know they are buying three products at a time, and they can receive the discount provided that they buy a multiple of three items.
 
-Besides, sellers also have the power of limiting the maximum quantity to be bought per customers by setting a max number. It’s probably because the store owners want to give a fair opportunity for more customers to buy a product at a profitable price, so the max quantity is very necessary as in case (6). For greater results, like when you’re holding a Flash sale every single day from 8:00 to 9:00, you can combine this plugin with WPC Product Timer for WooCommerce to make sure each buyer can only get 1 item at maximum.
+Besides, sellers also have the power of limiting the maximum quantity to be bought per customer by setting a max number. It’s probably because the store owners want to give a fair opportunity for more customers to buy a product at a profitable price, so the max quantity is very necessary as in case (6). For greater results, like when you’re holding a Flash sale every single day from 8:00 to 9:00, you can combine this plugin with WPC Product Timer for WooCommerce to make sure each buyer can only get 1 item at maximum.
 
 **Decimal Quantity for Fractional Products**
 
-There are special situations like case (2) when your products are not frequently sold in whole numbers like 1, 2, 3 but it requires smaller quantities such as 0.5 liters of wine, 2.5 meters of fabric, 4.5 kilograms of rice, etc. As WooCommerce wouldn’t let us use the decimal or fractional units, this is when WPC Product Quantity steps in to save the day. Notably, with this plugin, even decimal step values are accepted as well. Users can have it like 0.25, 0.5, 0.75, 1.0, etc after enabling the decimal units at the first line in settings. This will also come in handy especially when you are handmade material retailers who sell DIY wallpapers, floor mats, origami papers, jewelry pieces or buds, ...
+There are special situations like case (2) when your products are not frequently sold in whole numbers like 1, 2, 3, but it requires smaller quantities such as 0.5 liters of wine, 2.5 meters of fabric, 4.5 kilograms of rice, etc. As WooCommerce wouldn’t let us use the decimal or fractional units, this is when WPC Product Quantity steps in to save the day. Notably, with this plugin, even decimal step values are accepted as well. Users can have it like 0.25, 0.5, 0.75, 1.0, etc after enabling the decimal units at the first line in settings. This will also come in handy especially when you are handmade material retailers who sell DIY wallpapers, floor mats, origami papers, jewelry pieces or buds, ...
 
 **Custom Quantity & Selector Interface for Individual Products**
 
-The most outstanding feature of this plugin would be the ability to help users configure a deal with complex item quantities as mentioned in case (3). Assume that your store is running a campaign that involves selling a set of cosmetics deal as below:
+The most outstanding feature of this plugin would be the ability to help users configure a deal with complex item quantities as mentioned in case (3). Assume that your store is running a campaign that involves selling a set of cosmetics deals as below:
 
 - 1 box of the organic sleeping mask, default quantity as 1 and limit 2 boxes per customer.
 - 1 bottle of hair shampoo which comes with 4 options of content: 250 ml (sample), 500 ml, 1 l, 1.5 l
-- 1 bag of makeup pads, default quantity as 1 and no max quantity ( as long as the stock allows)
+- 1 bag of makeup pads, default quantity as 1 and no max quantity (as long as the stock allows)
 
-Now, this might tear your hair out quite a lot, right? Don’t worry. Let’s break it down. In order to create this offer, you might need to create a product bundle with 3 bundled items and set individual quantity as well as the selector for each.
+Now, this might tear your hair out quite a lot, right? Don’t worry. Let’s break it down. To create this offer, you might need to create a product bundle with 3 bundled items and set individual quantity as well as the selector for each.
 
-The first item should have min=1, max=2, either selector interface is fine as the number of choices is small. When the number of options goes higher than 3 as in the second item, we recommend that you use the default or drop down selector instead of radio buttons to save the space. And for the third item, min=1, max should leave blank in order to use the product stock count. As the number of this item might get a big number, so you should consider using the default selector and a reasonable step to save the effort. In the Premium version of this tool, users can freely set the quantity settings for each individual products, hence, when combining with other plugins for creating bundles and combos, it’s the most powerful for sellers to configure even the most complicated deal.
+The first item should have min=1, max=2; either selector interface is fine as the number of choices is small. When the number of options goes higher than 3, as in the second item, we recommend that you use the default or drop down selector instead of radio buttons to save the space. And for the third item, min=1, max should leave blank to use the product stock count. As the number of this item might get a big number, so you should consider using the default selector and a reasonable step to save the effort. In the Premium version of this tool, users can freely set the quantity settings for each product; hence, when combining with other plugins for creating bundles and combos, it’s the most powerful for sellers to configure even the most complicated deal.
 
 = Need more features? =
 
@@ -91,10 +91,14 @@ Please try other plugins from us:
 
 1. Please make sure that you installed WooCommerce
 2. Go to plugins in your dashboard and select "Add New"
-3. Search for "WPC Product Quantity", Install & Activate it
+3. Search for "WPC Product Quantity," Install & Activate it
 4. Go to WPClever > Product Quantity to make your customization
 
 == Changelog ==
+
+= 5.1.2 =
+* Fixed: Minor CSS/JS issues in the backend
+* Updated: Compatible with WP 6.8 & Woo 10.2
 
 = 5.1.1 =
 * Updated: Compatible with WP 6.8 & Woo 10.1
