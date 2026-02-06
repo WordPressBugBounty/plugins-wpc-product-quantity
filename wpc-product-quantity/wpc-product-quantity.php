@@ -3,29 +3,29 @@
 Plugin Name: WPC Product Quantity for WooCommerce
 Plugin URI: https://wpclever.net/
 Description: WPC Product Quantity provides powerful controls for product quantity.
-Version: 5.1.2
+Version: 5.1.5
 Author: WPClever
 Author URI: https://wpclever.net
 Text Domain: wpc-product-quantity
 Domain Path: /languages/
 Requires Plugins: woocommerce
 Requires at least: 4.0
-Tested up to: 6.8
+Tested up to: 6.9
 WC requires at least: 3.0
-WC tested up to: 10.2
+WC tested up to: 10.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 */
 
 defined( 'ABSPATH' ) || exit;
 
-! defined( 'WOOPQ_VERSION' ) && define( 'WOOPQ_VERSION', '5.1.2' );
+! defined( 'WOOPQ_VERSION' ) && define( 'WOOPQ_VERSION', '5.1.5' );
 ! defined( 'WOOPQ_LITE' ) && define( 'WOOPQ_LITE', __FILE__ );
 ! defined( 'WOOPQ_FILE' ) && define( 'WOOPQ_FILE', __FILE__ );
 ! defined( 'WOOPQ_URI' ) && define( 'WOOPQ_URI', plugin_dir_url( __FILE__ ) );
 ! defined( 'WOOPQ_DIR' ) && define( 'WOOPQ_DIR', plugin_dir_path( __FILE__ ) );
 ! defined( 'WOOPQ_SUPPORT' ) && define( 'WOOPQ_SUPPORT', 'https://wpclever.net/support?utm_source=support&utm_medium=woopq&utm_campaign=wporg' );
-! defined( 'WOOPQ_REVIEWS' ) && define( 'WOOPQ_REVIEWS', 'https://wordpress.org/support/plugin/wpc-product-quantity/reviews/?filter=5' );
+! defined( 'WOOPQ_REVIEWS' ) && define( 'WOOPQ_REVIEWS', 'https://wordpress.org/support/plugin/wpc-product-quantity/reviews/' );
 ! defined( 'WOOPQ_CHANGELOG' ) && define( 'WOOPQ_CHANGELOG', 'https://wordpress.org/plugins/wpc-product-quantity/#developers' );
 ! defined( 'WOOPQ_DISCUSSION' ) && define( 'WOOPQ_DISCUSSION', 'https://wordpress.org/support/plugin/wpc-product-quantity' );
 ! defined( 'WPC_URI' ) && define( 'WPC_URI', WOOPQ_URI );
@@ -79,11 +79,6 @@ if ( ! function_exists( 'woopq_init' ) ) {
                     // args
                     add_filter( 'woocommerce_quantity_input_args', [ $this, 'quantity_input_args' ], 99, 2 );
                     add_filter( 'woocommerce_loop_add_to_cart_args', [ $this, 'loop_add_to_cart_args' ], 99, 2 );
-
-                    // default input
-                    //add_filter( 'woocommerce_quantity_input_min', [ $this, 'quantity_input_min' ], 99, 2 );
-                    //add_filter( 'woocommerce_quantity_input_max', [ $this, 'quantity_input_max' ], 99, 2 );
-                    //add_filter( 'woocommerce_quantity_input_step', [ $this, 'quantity_input_step' ], 99, 2 );
 
                     // admin input
                     add_filter( 'woocommerce_quantity_input_min_admin', [ $this, 'quantity_input_min_admin' ], 99, 2 );
@@ -182,7 +177,10 @@ if ( ! function_exists( 'woopq_init' ) ) {
 
                 function register_settings() {
                     // settings
-                    register_setting( 'woopq_settings', 'woopq_settings' );
+                    register_setting( 'woopq_settings', 'woopq_settings', [
+                            'type'              => 'array',
+                            'sanitize_callback' => [ $this, 'sanitize_array' ],
+                    ] );
                 }
 
                 function admin_menu() {
@@ -433,6 +431,10 @@ if ( ! function_exists( 'woopq_init' ) ) {
                                         <tr class="submit">
                                             <th colspan="2">
                                                 <?php settings_fields( 'woopq_settings' ); ?><?php submit_button(); ?>
+                                                <a style="display: none;" class="wpclever_export"
+                                                   data-key="woopq_settings"
+                                                   data-name="settings"
+                                                   href="#"><?php esc_html_e( 'import / export', 'wpc-product-quantity' ); ?></a>
                                             </th>
                                         </tr>
                                     </table>
@@ -851,11 +853,34 @@ if ( ! function_exists( 'woopq_init' ) ) {
                         $product_id = 0;
                     }
 
-                    if ( $is_variation || $product->is_type( 'variation' ) ) {
+                    if ( $is_variation || is_a( $product, 'WC_Product_Variation' ) ) {
                         return apply_filters( 'woopq_quantity', get_post_meta( $product_id, '_woopq_quantity', true ) ?: 'parent', $product_id );
                     }
 
                     return apply_filters( 'woopq_quantity', get_post_meta( $product_id, '_woopq_quantity', true ) ?: 'default', $product_id );
+                }
+
+                function get_quantity_validation( $product ) {
+                    if ( is_numeric( $product ) ) {
+                        $product_id = $product;
+                        $product    = wc_get_product( $product_id );
+                    } elseif ( is_a( $product, 'WC_Product' ) ) {
+                        $product_id = $product->get_id();
+                    } else {
+                        $product_id = 0;
+                    }
+
+                    if ( is_a( $product, 'WC_Product_Variation' ) ) {
+                        $quantity = get_post_meta( $product_id, '_woopq_quantity', true ) ?: 'parent';
+
+                        if ( $quantity === 'parent' ) {
+                            $quantity = get_post_meta( $product->get_parent_id(), '_woopq_quantity', true ) ?: 'default';
+                        }
+                    } else {
+                        $quantity = get_post_meta( $product_id, '_woopq_quantity', true ) ?: 'default';
+                    }
+
+                    return apply_filters( 'woopq_quantity_validation', $quantity, $product_id );
                 }
 
                 function get_type( $product ) {
@@ -882,7 +907,7 @@ if ( ! function_exists( 'woopq_init' ) ) {
 
                             break;
                         case 'parent':
-                            if ( $product->is_type( 'variation' ) && ( $parent_id = $product->get_parent_id() ) ) {
+                            if ( is_a( $product, 'WC_Product_Variation' ) && ( $parent_id = $product->get_parent_id() ) ) {
                                 return self::get_type( $parent_id );
                             }
 
@@ -926,7 +951,7 @@ if ( ! function_exists( 'woopq_init' ) ) {
 
                             break;
                         case 'parent':
-                            if ( $product->is_type( 'variation' ) && ( $parent_id = $product->get_parent_id() ) ) {
+                            if ( is_a( $product, 'WC_Product_Variation' ) && ( $parent_id = $product->get_parent_id() ) ) {
                                 return self::get_min( wc_get_product( $parent_id ) );
                             }
 
@@ -993,7 +1018,7 @@ if ( ! function_exists( 'woopq_init' ) ) {
 
                             break;
                         case 'parent':
-                            if ( $product->is_type( 'variation' ) && ( $parent_id = $product->get_parent_id() ) ) {
+                            if ( is_a( $product, 'WC_Product_Variation' ) && ( $parent_id = $product->get_parent_id() ) ) {
                                 return self::get_max( wc_get_product( $parent_id ), $max, $max_value );
                             }
 
@@ -1052,7 +1077,7 @@ if ( ! function_exists( 'woopq_init' ) ) {
 
                             break;
                         case 'parent':
-                            if ( $product->is_type( 'variation' ) && ( $parent_id = $product->get_parent_id() ) ) {
+                            if ( is_a( $product, 'WC_Product_Variation' ) && ( $parent_id = $product->get_parent_id() ) ) {
                                 return self::get_step( wc_get_product( $parent_id ) );
                             }
 
@@ -1099,7 +1124,7 @@ if ( ! function_exists( 'woopq_init' ) ) {
 
                             break;
                         case 'parent':
-                            if ( $product->is_type( 'variation' ) && ( $parent_id = $product->get_parent_id() ) ) {
+                            if ( is_a( $product, 'WC_Product_Variation' ) && ( $parent_id = $product->get_parent_id() ) ) {
                                 return self::get_value( wc_get_product( $parent_id ) );
                             }
 
@@ -1145,7 +1170,7 @@ if ( ! function_exists( 'woopq_init' ) ) {
 
                             break;
                         case 'parent':
-                            if ( $product->is_type( 'variation' ) && ( $parent_id = $product->get_parent_id() ) ) {
+                            if ( is_a( $product, 'WC_Product_Variation' ) && ( $parent_id = $product->get_parent_id() ) ) {
                                 return self::get_values( wc_get_product( $parent_id ) );
                             }
 
@@ -1465,7 +1490,7 @@ if ( ! function_exists( 'woopq_init' ) ) {
                         $product_id = $variation_id;
                     }
 
-                    if ( ( self::get_quantity( $product_id ) !== 'disable' ) && apply_filters( 'woopq_add_to_cart_validation', true, $product_id, $qty ) ) {
+                    if ( ( self::get_quantity_validation( $product_id ) !== 'disable' ) && apply_filters( 'woopq_add_to_cart_validation', true, $product_id, $qty ) ) {
                         // only validate when active quantity settings
                         $product = wc_get_product( $product_id );
                         $added   = self::qty_in_cart( $product_id );
