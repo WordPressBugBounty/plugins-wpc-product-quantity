@@ -2,14 +2,14 @@
 # This file is distributed under the GPLv2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: WPC Product Quantity for WooCommerce 5.1.6\n"
+"Project-Id-Version: WPC Product Quantity for WooCommerce 5.2.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/wpc-product-quantity\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-03-14T11:59:19+00:00\n"
+"POT-Creation-Date: 2026-04-21T04:23:26+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: wpc-product-quantity\n"
@@ -39,17 +39,289 @@ msgstr ""
 msgid "https://wpclever.net"
 msgstr ""
 
-#. translators: product name
-#: templates/quantity-input.php:59
+#: includes/class-backend.php:125
+#: includes/class-backend.php:142
+#: includes/class-backend.php:917
+msgid "WPC Product Quantity"
+msgstr ""
+
+#: includes/class-backend.php:125
+msgid "Product Quantity"
+msgstr ""
+
+#: includes/class-backend.php:142
+msgid "Premium"
+msgstr ""
+
+#. translators: stars
+#: includes/class-backend.php:145
 #, php-format
-msgid "%s quantity"
+msgid "Thank you for using our plugin! If you are satisfied, please reward it a full five-star %s rating."
+msgstr ""
+
+#: includes/class-backend.php:148
+msgid "Reviews"
+msgstr ""
+
+#: includes/class-backend.php:151
+msgid "Changelog"
+msgstr ""
+
+#: includes/class-backend.php:154
+msgid "Discussion"
+msgstr ""
+
+#: includes/class-backend.php:162
+msgid "Settings updated."
+msgstr ""
+
+#: includes/class-backend.php:169
+#: includes/class-backend.php:708
+msgid "Settings"
+msgstr ""
+
+#: includes/class-backend.php:174
+#: includes/class-backend.php:709
+msgid "Premium Version"
+msgstr ""
+
+#: includes/class-backend.php:178
+msgid "Essential Kit"
+msgstr ""
+
+#: includes/class-backend.php:243
+msgid "General"
+msgstr ""
+
+#: includes/class-backend.php:248
+msgid "Decimal quantities"
+msgstr ""
+
+#: includes/class-backend.php:252
+#: includes/class-backend.php:293
+msgid "No"
+msgstr ""
+
+#: includes/class-backend.php:253
+#: includes/class-backend.php:292
+msgid "Yes"
+msgstr ""
+
+#: includes/class-backend.php:255
+msgid "Press \"Update Options\" after enabling this option, then you can enter decimal quantities in min, max, step quantity options."
+msgstr ""
+
+#: includes/class-backend.php:259
+msgid "Plus/minus button"
+msgstr ""
+
+#: includes/class-backend.php:262
+msgid "Show"
+msgstr ""
+
+#: includes/class-backend.php:263
+msgid "Hide"
+msgstr ""
+
+#: includes/class-backend.php:265
+msgid "Show the plus/minus button for the input type to increase/decrease the quantity."
+msgstr ""
+
+#: includes/class-backend.php:269
+msgid "Auto-correct"
+msgstr ""
+
+#: includes/class-backend.php:272
+msgid "While entering"
+msgstr ""
+
+#: includes/class-backend.php:273
+msgid "Out of focus"
+msgstr ""
+
+#: includes/class-backend.php:275
+msgid "When the auto-correct functionality will be triggered: while entering the number or out of focus on the input (click outside)."
+msgstr ""
+
+#: includes/class-backend.php:279
+msgid "Rounding values"
+msgstr ""
+
+#: includes/class-backend.php:282
+msgid "Down"
+msgstr ""
+
+#: includes/class-backend.php:283
+msgid "Up"
+msgstr ""
+
+#: includes/class-backend.php:285
+msgid "Round the quantity to the nearest bigger (up) or smaller (down) value when an invalid number is inputted."
+msgstr ""
+
+#: includes/class-backend.php:289
+msgid "Works in backend"
+msgstr ""
+
+#: includes/class-backend.php:295
+msgid "Quantity rules will be applied for product in the backend or not. E.g, editing products on the order."
+msgstr ""
+
+#: includes/class-backend.php:300
+msgid "Global rules"
+msgstr ""
+
+#: includes/class-backend.php:303
+msgid "Conditions will be checked from the top of the list down to the end. Products with no applicable conditions matched will follow the default settings in #default. Quantity rules for individual products can be configured on their single product pages and will be the most prioritized. Order of priority: Individual rules >> Global rules >> Default settings."
+msgstr ""
+
+#: includes/class-backend.php:313
+msgid "+ Add rule"
+msgstr ""
+
+#: includes/class-backend.php:334
+#: includes/class-backend.php:536
+msgid "move"
+msgstr ""
+
+#: includes/class-backend.php:340
+#: includes/class-backend.php:620
+msgid "Type"
+msgstr ""
+
+#: includes/class-backend.php:345
+#: includes/class-backend.php:625
+msgid "Input (Default)"
+msgstr ""
+
+#: includes/class-backend.php:346
+#: includes/class-backend.php:626
+msgid "Select"
+msgstr ""
+
+#: includes/class-backend.php:347
+#: includes/class-backend.php:627
+msgid "Radio"
+msgstr ""
+
+#: includes/class-backend.php:352
+#: includes/class-backend.php:632
+msgid "Values"
+msgstr ""
+
+#: includes/class-backend.php:359
+#: includes/class-backend.php:640
+msgid "These values will be used for select/radio type. Enter each value in one line and can use the range e.g \"10-20\"."
+msgstr ""
+
+#: includes/class-backend.php:363
+#: includes/class-backend.php:644
+msgid "Minimum"
+msgstr ""
+
+#: includes/class-backend.php:375
+#: includes/class-backend.php:655
+msgid "Step"
+msgstr ""
+
+#: includes/class-backend.php:387
+#: includes/class-backend.php:666
+msgid "Maximum"
+msgstr ""
+
+#: includes/class-backend.php:399
+#: includes/class-backend.php:677
+msgid "Default value"
+msgstr ""
+
+#: includes/class-backend.php:432
+msgid "import / export"
+msgstr ""
+
+#: includes/class-backend.php:541
+msgid "duplicate"
+msgstr ""
+
+#: includes/class-backend.php:542
+msgid "remove"
+msgstr ""
+
+#: includes/class-backend.php:555
+msgid "Apply for"
+msgstr ""
+
+#: includes/class-backend.php:561
+msgid "All products"
+msgstr ""
+
+#: includes/class-backend.php:571
+#: includes/class-backend.php:599
+msgid "Include either"
+msgstr ""
+
+#: includes/class-backend.php:572
+#: includes/class-backend.php:600
+msgid "Include all"
+msgstr ""
+
+#: includes/class-backend.php:594
+msgid "User roles"
+msgstr ""
+
+#: includes/class-backend.php:608
+msgid "All"
+msgstr ""
+
+#: includes/class-backend.php:609
+msgid "User (logged in)"
+msgstr ""
+
+#: includes/class-backend.php:610
+msgid "Guest (not logged in)"
+msgstr ""
+
+#: includes/class-backend.php:733
+msgid "Community support"
+msgstr ""
+
+#. translators: product name
+#: includes/class-backend.php:751
+#: includes/class-backend.php:812
+#: templates/quantity-input.php:59
+msgid "Quantity"
+msgstr ""
+
+#: includes/class-backend.php:778
+msgid "Product wasn't returned."
+msgstr ""
+
+#: includes/class-backend.php:818
+#: includes/class-backend.php:831
+msgid "Default"
+msgstr ""
+
+#: includes/class-backend.php:819
+msgid "Parent"
+msgstr ""
+
+#: includes/class-backend.php:820
+#: includes/class-backend.php:841
+msgid "Disable"
+msgstr ""
+
+#: includes/class-backend.php:822
+#: includes/class-backend.php:849
+msgid "Overwrite"
+msgstr ""
+
+#: includes/class-backend.php:834
+msgid "settings"
 msgstr ""
 
 #. translators: product name
 #: templates/quantity-input.php:59
-#: wpc-product-quantity.php:1391
-#: wpc-product-quantity.php:1443
-msgid "Quantity"
+#, php-format
+msgid "%s quantity"
 msgstr ""
 
 #: templates/quantity-input.php:93
@@ -61,364 +333,92 @@ msgstr ""
 msgid "Product quantity"
 msgstr ""
 
-#: wpc-product-quantity.php:198
-#: wpc-product-quantity.php:212
-#: wpc-product-quantity.php:1617
-msgid "WPC Product Quantity"
-msgstr ""
-
-#: wpc-product-quantity.php:198
-msgid "Product Quantity"
-msgstr ""
-
-#: wpc-product-quantity.php:212
-msgid "Premium"
-msgstr ""
-
-#. translators: stars
-#: wpc-product-quantity.php:215
-#, php-format
-msgid "Thank you for using our plugin! If you are satisfied, please reward it a full five-star %s rating."
-msgstr ""
-
-#: wpc-product-quantity.php:218
-msgid "Reviews"
-msgstr ""
-
-#: wpc-product-quantity.php:221
-msgid "Changelog"
-msgstr ""
-
-#: wpc-product-quantity.php:224
-msgid "Discussion"
-msgstr ""
-
-#: wpc-product-quantity.php:232
-msgid "Settings updated."
-msgstr ""
-
-#: wpc-product-quantity.php:239
-#: wpc-product-quantity.php:748
-msgid "Settings"
-msgstr ""
-
-#: wpc-product-quantity.php:244
-#: wpc-product-quantity.php:749
-msgid "Premium Version"
-msgstr ""
-
-#: wpc-product-quantity.php:248
-msgid "Essential Kit"
-msgstr ""
-
-#: wpc-product-quantity.php:268
-msgid "General"
-msgstr ""
-
-#: wpc-product-quantity.php:273
-msgid "Decimal quantities"
-msgstr ""
-
-#: wpc-product-quantity.php:277
-#: wpc-product-quantity.php:318
-msgid "No"
-msgstr ""
-
-#: wpc-product-quantity.php:278
-#: wpc-product-quantity.php:317
-msgid "Yes"
-msgstr ""
-
-#: wpc-product-quantity.php:280
-msgid "Press \"Update Options\" after enabling this option, then you can enter decimal quantities in min, max, step quantity options."
-msgstr ""
-
-#: wpc-product-quantity.php:284
-msgid "Plus/minus button"
-msgstr ""
-
-#: wpc-product-quantity.php:287
-msgid "Show"
-msgstr ""
-
-#: wpc-product-quantity.php:288
-msgid "Hide"
-msgstr ""
-
-#: wpc-product-quantity.php:290
-msgid "Show the plus/minus button for the input type to increase/decrease the quantity."
-msgstr ""
-
-#: wpc-product-quantity.php:294
-msgid "Auto-correct"
-msgstr ""
-
-#: wpc-product-quantity.php:297
-msgid "While entering"
-msgstr ""
-
-#: wpc-product-quantity.php:298
-msgid "Out of focus"
-msgstr ""
-
-#: wpc-product-quantity.php:300
-msgid "When the auto-correct functionality will be triggered: while entering the number or out of focus on the input (click outside)."
-msgstr ""
-
-#: wpc-product-quantity.php:304
-msgid "Rounding values"
-msgstr ""
-
-#: wpc-product-quantity.php:307
-msgid "Down"
-msgstr ""
-
-#: wpc-product-quantity.php:308
-msgid "Up"
-msgstr ""
-
-#: wpc-product-quantity.php:310
-msgid "Round the quantity to the nearest bigger (up) or smaller (down) value when an invalid number is inputted."
-msgstr ""
-
-#: wpc-product-quantity.php:314
-msgid "Works in backend"
-msgstr ""
-
-#: wpc-product-quantity.php:320
-msgid "Quantity rules will be applied for product in the backend or not. E.g, editing products on the order."
-msgstr ""
-
-#: wpc-product-quantity.php:325
-msgid "Global rules"
-msgstr ""
-
-#: wpc-product-quantity.php:328
-msgid "Conditions will be checked from the top of the list down to the end. Products with no applicable conditions matched will follow the default settings in #default. Quantity rules for individual products can be configured on their single product pages and will be the most prioritized. Order of priority: Individual rules >> Global rules >> Default settings."
-msgstr ""
-
-#: wpc-product-quantity.php:338
-msgid "+ Add rule"
-msgstr ""
-
-#: wpc-product-quantity.php:359
-#: wpc-product-quantity.php:584
-msgid "move"
-msgstr ""
-
-#: wpc-product-quantity.php:365
-#: wpc-product-quantity.php:668
-msgid "Type"
-msgstr ""
-
-#: wpc-product-quantity.php:370
-#: wpc-product-quantity.php:673
-msgid "Input (Default)"
-msgstr ""
-
-#: wpc-product-quantity.php:371
-#: wpc-product-quantity.php:674
-msgid "Select"
-msgstr ""
-
-#: wpc-product-quantity.php:372
-#: wpc-product-quantity.php:675
-msgid "Radio"
-msgstr ""
-
-#: wpc-product-quantity.php:377
-#: wpc-product-quantity.php:680
-msgid "Values"
-msgstr ""
-
-#: wpc-product-quantity.php:384
-#: wpc-product-quantity.php:688
-msgid "These values will be used for select/radio type. Enter each value in one line and can use the range e.g \"10-20\"."
-msgstr ""
-
-#: wpc-product-quantity.php:388
-#: wpc-product-quantity.php:692
-msgid "Minimum"
-msgstr ""
-
-#: wpc-product-quantity.php:400
-#: wpc-product-quantity.php:703
-msgid "Step"
-msgstr ""
-
-#: wpc-product-quantity.php:412
-#: wpc-product-quantity.php:714
-msgid "Maximum"
-msgstr ""
-
-#: wpc-product-quantity.php:424
-#: wpc-product-quantity.php:725
-msgid "Default value"
-msgstr ""
-
-#: wpc-product-quantity.php:457
-msgid "import / export"
-msgstr ""
-
-#: wpc-product-quantity.php:589
-msgid "duplicate"
-msgstr ""
-
-#: wpc-product-quantity.php:590
-msgid "remove"
-msgstr ""
-
-#: wpc-product-quantity.php:603
-msgid "Apply for"
-msgstr ""
-
-#: wpc-product-quantity.php:609
-msgid "All products"
-msgstr ""
-
-#: wpc-product-quantity.php:619
-#: wpc-product-quantity.php:647
-msgid "Include either"
-msgstr ""
-
-#: wpc-product-quantity.php:620
-#: wpc-product-quantity.php:648
-msgid "Include all"
-msgstr ""
-
-#: wpc-product-quantity.php:642
-msgid "User roles"
-msgstr ""
-
-#: wpc-product-quantity.php:656
-msgid "All"
-msgstr ""
-
-#: wpc-product-quantity.php:657
-msgid "User (logged in)"
-msgstr ""
-
-#: wpc-product-quantity.php:658
-msgid "Guest (not logged in)"
-msgstr ""
-
-#: wpc-product-quantity.php:765
-msgid "Community support"
-msgstr ""
-
-#: wpc-product-quantity.php:1415
-msgid "Product wasn't returned."
-msgstr ""
-
-#: wpc-product-quantity.php:1449
-#: wpc-product-quantity.php:1462
-msgid "Default"
-msgstr ""
-
-#: wpc-product-quantity.php:1450
-msgid "Parent"
-msgstr ""
-
-#: wpc-product-quantity.php:1451
-#: wpc-product-quantity.php:1472
-msgid "Disable"
-msgstr ""
-
-#: wpc-product-quantity.php:1453
-#: wpc-product-quantity.php:1481
-msgid "Overwrite"
-msgstr ""
-
-#: wpc-product-quantity.php:1465
-msgid "settings"
-msgstr ""
-
 #. translators: min
-#: wpc-product-quantity.php:1525
+#: wpc-product-quantity.php:789
 #, php-format
 msgid "You can't add less than %1$s &times; \"%2$s\" to the cart."
 msgstr ""
 
 #. translators: max
-#: wpc-product-quantity.php:1531
+#: wpc-product-quantity.php:795
 #, php-format
 msgid "You can't add more than %1$s &times; \"%2$s\" to the cart."
 msgstr ""
 
 #. translators: invalid
-#: wpc-product-quantity.php:1540
-#: wpc-product-quantity.php:1551
+#: wpc-product-quantity.php:804
+#: wpc-product-quantity.php:815
 #, php-format
 msgid "You can't add %1$s &times; \"%2$s\" to the cart."
 msgstr ""
 
 #. translators: %s: product name
-#: wpc-product-quantity.php:1589
+#: wpc-product-quantity.php:853
 #, php-format
 msgctxt "Item name in quotes"
 msgid "&ldquo;%s&rdquo;"
 msgstr ""
 
 #. translators: %s: product name
-#: wpc-product-quantity.php:1595
+#: wpc-product-quantity.php:859
 #, php-format
 msgid "%s has been added to your cart."
 msgid_plural "%s have been added to your cart."
 msgstr[0] ""
 msgstr[1] ""
 
-#: wpc-product-quantity.php:1599
+#: wpc-product-quantity.php:863
 msgid "Continue shopping"
 msgstr ""
 
-#: wpc-product-quantity.php:1601
+#: wpc-product-quantity.php:865
 msgid "View cart"
 msgstr ""
 
-#: wpc-product-quantity.php:1676
+#: wpc-product-quantity.php:939
 msgid "Before wrapper"
 msgstr ""
 
-#: wpc-product-quantity.php:1677
+#: wpc-product-quantity.php:940
 msgid "After wrapper"
 msgstr ""
 
-#: wpc-product-quantity.php:1678
+#: wpc-product-quantity.php:941
 msgid "Before quantity input"
 msgstr ""
 
-#: wpc-product-quantity.php:1679
+#: wpc-product-quantity.php:942
 msgid "After quantity input"
 msgstr ""
 
-#: wpc-product-quantity.php:1680
+#: wpc-product-quantity.php:943
 msgid "Before hidden field"
 msgstr ""
 
-#: wpc-product-quantity.php:1681
+#: wpc-product-quantity.php:944
 msgid "After hidden field"
 msgstr ""
 
-#: wpc-product-quantity.php:1682
+#: wpc-product-quantity.php:945
 msgid "Before select field"
 msgstr ""
 
-#: wpc-product-quantity.php:1683
+#: wpc-product-quantity.php:946
 msgid "After select field"
 msgstr ""
 
-#: wpc-product-quantity.php:1684
+#: wpc-product-quantity.php:947
 msgid "Before radio field"
 msgstr ""
 
-#: wpc-product-quantity.php:1685
+#: wpc-product-quantity.php:948
 msgid "After radio field"
 msgstr ""
 
-#: wpc-product-quantity.php:1686
+#: wpc-product-quantity.php:949
 msgid "Before input field"
 msgstr ""
 
-#: wpc-product-quantity.php:1687
+#: wpc-product-quantity.php:950
 msgid "After input field"
 msgstr ""
