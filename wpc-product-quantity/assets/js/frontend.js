@@ -24,21 +24,22 @@
         });
 
     $(document).on('found_variation', function (e, t) {
-        var $quantity = $(e['target']).closest('.variations_form').find('[name="quantity"]').closest('.woopq-quantity');
+        var $form = $(e.target).closest('.variations_form');
+        var $quantity = $form.find('[name="quantity"]').closest('.woopq-quantity');
         var value = parseFloat($quantity.find('.qty').val());
-        var changed = $(e['target']).closest('.variations_form').data('woopq_changed');
+        var changed = $form.data('woopq_changed');
 
         if (t.woopq_qty != undefined) {
             $quantity.replaceWith(woopq_decode_entities(t.woopq_qty));
         }
 
+        var $newQty = $form.find('[name="quantity"]').closest('.woopq-quantity');
+
         if (changed === undefined) {
             // did not change qty
-            woopq_init_qty_e($(e['target']).closest('.variations_form').find('[name="quantity"]').closest('.woopq-quantity'), t.woopq_min, t.woopq_max, t.woopq_step,
-                t.woopq_value);
+            woopq_init_qty_e($newQty, t.woopq_min, t.woopq_max, t.woopq_step, t.woopq_value);
         } else {
-            woopq_init_qty_e($(e['target']).closest('.variations_form').find('[name="quantity"]').closest('.woopq-quantity'), t.woopq_min, t.woopq_max, t.woopq_step,
-                value);
+            woopq_init_qty_e($newQty, t.woopq_min, t.woopq_max, t.woopq_step, value);
         }
 
         $(document.body).trigger('woopq_replace_qty');
@@ -46,19 +47,22 @@
     });
 
     $(document).on('reset_data', function (e) {
-        var $quantity = $(e['target']).closest('.variations_form').find('[name="quantity"]').closest('.woopq-quantity');
+        var $form = $(e.target).closest('.variations_form');
+        var $quantity = $form.find('[name="quantity"]').closest('.woopq-quantity');
         var value = parseFloat($quantity.find('.qty').val());
-        var changed = $(e['target']).closest('.variations_form').data('woopq_changed');
-        var variable_qty = $(e['target']).closest('.variations_form').find('.woopq-quantity-variable').attr('data-qty');
+        var changed = $form.data('woopq_changed');
+        var variable_qty = $form.find('.woopq-quantity-variable').attr('data-qty');
 
         if (variable_qty != undefined) {
             $quantity.replaceWith(woopq_decode_entities(variable_qty));
         }
 
+        var $newQty = $form.find('[name="quantity"]').closest('.woopq-quantity');
+
         if (changed === undefined) {
-            woopq_init_qty_e($(e['target']).closest('.variations_form').find('[name="quantity"]').closest('.woopq-quantity'), null, null, null, null);
+            woopq_init_qty_e($newQty, null, null, null, null);
         } else {
-            woopq_init_qty_e($(e['target']).closest('.variations_form').find('[name="quantity"]').closest('.woopq-quantity'), null, null, null, value);
+            woopq_init_qty_e($newQty, null, null, null, value);
         }
 
         $(document.body).trigger('woopq_reset_qty');
@@ -256,6 +260,7 @@ function woopq_float_remainder(val, step) {
 }
 
 function woopq_decode_entities(encodedString) {
+    // Textarea approach safely decodes HTML entities while preserving markup as a string
     var textArea = document.createElement('textarea');
     textArea.innerHTML = encodedString;
 

@@ -3,7 +3,7 @@
 Plugin Name: WPC Product Quantity for WooCommerce
 Plugin URI: https://wpclever.net/
 Description: WPC Product Quantity provides powerful controls for product quantity.
-Version: 5.2.0
+Version: 6.0.0
 Author: WPClever
 Author URI: https://wpclever.net
 Text Domain: wpc-product-quantity
@@ -19,7 +19,7 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 defined( 'ABSPATH' ) || exit;
 
-! defined( 'WOOPQ_VERSION' ) && define( 'WOOPQ_VERSION', '5.2.0' );
+! defined( 'WOOPQ_VERSION' ) && define( 'WOOPQ_VERSION', '6.0.0' );
 ! defined( 'WOOPQ_LITE' ) && define( 'WOOPQ_LITE', __FILE__ );
 ! defined( 'WOOPQ_FILE' ) && define( 'WOOPQ_FILE', __FILE__ );
 ! defined( 'WOOPQ_URI' ) && define( 'WOOPQ_URI', plugin_dir_url( __FILE__ ) );
@@ -50,6 +50,14 @@ if ( ! function_exists( 'woopq_init' ) ) {
 				 * @var bool|null
 				 */
 				private static $is_decimal = null;
+
+				/**
+				 * Per-request runtime caches to avoid redundant DB lookups.
+				 */
+				private static $product_cache = [];
+				private static $quantity_cache = [];
+				private static $type_cache = [];
+				private static $parsed_rules = null;
 
 				public static function instance() {
 					if ( is_null( self::$instance ) ) {
@@ -253,28 +261,31 @@ if ( ! function_exists( 'woopq_init' ) ) {
 				 */
 				private static function resolve_product( $product ) {
 					if ( is_numeric( $product ) ) {
-						return [ (int) $product, wc_get_product( $product ) ];
+						$id = (int) $product;
+
+						if ( ! isset( self::$product_cache[ $id ] ) ) {
+							self::$product_cache[ $id ] = wc_get_product( $id );
+						}
+
+						return [ $id, self::$product_cache[ $id ] ];
 					}
 
 					if ( is_a( $product, 'WC_Product' ) ) {
-						return [ $product->get_id(), $product ];
+						$id                         = $product->get_id();
+						self::$product_cache[ $id ] = $product;
+
+						return [ $id, $product ];
 					}
 
 					return [ 0, null ];
 				}
 
-				public static function get_quantity( $product, $is_variation = false ) {
+				public static function get_quantity( $product ) {
 					[ $product_id, $product ] = self::resolve_product( $product );
 
-					if ( $is_variation || is_a( $product, 'WC_Product_Variation' ) ) {
-						return apply_filters( 'woopq_quantity', get_post_meta( $product_id, '_woopq_quantity', true ) ?: 'parent', $product_id );
+					if ( isset( self::$quantity_cache[ $product_id ] ) ) {
+						return self::$quantity_cache[ $product_id ];
 					}
-
-					return apply_filters( 'woopq_quantity', get_post_meta( $product_id, '_woopq_quantity', true ) ?: 'default', $product_id );
-				}
-
-				public static function get_quantity_validation( $product ) {
-					[ $product_id, $product ] = self::resolve_product( $product );
 
 					if ( is_a( $product, 'WC_Product_Variation' ) ) {
 						$quantity = get_post_meta( $product_id, '_woopq_quantity', true ) ?: 'parent';
@@ -286,11 +297,19 @@ if ( ! function_exists( 'woopq_init' ) ) {
 						$quantity = get_post_meta( $product_id, '_woopq_quantity', true ) ?: 'default';
 					}
 
-					return apply_filters( 'woopq_quantity_validation', $quantity, $product_id );
+					$result = apply_filters( 'woopq_quantity', $quantity, $product_id );
+
+					self::$quantity_cache[ $product_id ] = $result;
+
+					return $result;
 				}
 
 				public static function get_type( $product ) {
 					[ $product_id, $product ] = self::resolve_product( $product );
+
+					if ( isset( self::$type_cache[ $product_id ] ) ) {
+						return self::$type_cache[ $product_id ];
+					}
 
 					$woopq_type = 'default';
 					$quantity   = self::get_quantity( $product_id );
@@ -307,8 +326,14 @@ if ( ! function_exists( 'woopq_init' ) ) {
 							break;
 						case 'parent':
 							if ( is_a( $product, 'WC_Product_Variation' ) && ( $parent_id = $product->get_parent_id() ) ) {
-								return self::get_type( $parent_id );
+								$result                          = self::get_type( $parent_id );
+								self::$type_cache[ $product_id ] = $result;
+
+								return $result;
 							}
+
+							// Fallback to global if not a variation
+							$woopq_type = self::get_global_setting( 'type', $product );
 
 							break;
 						default:
@@ -317,50 +342,85 @@ if ( ! function_exists( 'woopq_init' ) ) {
 							break;
 					}
 
-					return apply_filters( 'woopq_type', $woopq_type, $product_id );
+					$result = apply_filters( 'woopq_type', $woopq_type, $product_id );
+
+					self::$type_cache[ $product_id ] = $result;
+
+					return $result;
 				}
 
-				public static function get_min( $product, $min = 0 ) {
-					[ $product_id, $product ] = self::resolve_product( $product );
-
-					$woopq_min = $min;
-					$quantity  = self::get_quantity( $product );
+				/**
+				 * Resolve a setting value based on the quantity mode.
+				 *
+				 * @param int $product_id Product ID.
+				 * @param WC_Product $product Product object.
+				 * @param string $name Setting name (min, max, step, value, values).
+				 * @param mixed $default Default fallback value.
+				 * @param callable|null $values_reducer Callback to derive value from values array (for min/max).
+				 *
+				 * @return mixed
+				 */
+				private static function resolve_setting( $product_id, $product, $name, $default, $values_reducer = null ) {
+					$result   = $default;
+					$quantity = self::get_quantity( $product );
 
 					switch ( $quantity ) {
 						case 'disable':
 							break;
 						case 'global':
 						case 'default':
-							if ( self::get_type( $product_id ) !== 'default' ) {
+							if ( $values_reducer && self::get_type( $product_id ) !== 'default' ) {
 								$woopq_values = self::get_values( $product );
-
 								if ( ! empty( $woopq_values ) ) {
-									$woopq_min = min( array_column( $woopq_values, 'value' ) );
+									$result = $values_reducer( array_column( $woopq_values, 'value' ) );
 								}
 							} else {
-								$woopq_min = self::get_global_setting( 'min', $product );
+								$result = self::get_global_setting( $name, $product );
 							}
-
 							break;
 						case 'parent':
-							if ( is_a( $product, 'WC_Product_Variation' ) && ( $parent_id = $product->get_parent_id() ) ) {
-								return self::get_min( wc_get_product( $parent_id ) );
-							}
-
+							$result = self::get_global_setting( $name, $product );
 							break;
 						default:
-							if ( self::get_type( $product_id ) !== 'default' ) {
+							if ( $values_reducer && self::get_type( $product_id ) !== 'default' ) {
 								$woopq_values = self::get_values( $product );
-
 								if ( ! empty( $woopq_values ) ) {
-									$woopq_min = min( array_column( $woopq_values, 'value' ) );
+									$result = $values_reducer( array_column( $woopq_values, 'value' ) );
 								}
 							} else {
-								$woopq_min = self::get_product_setting( 'min', $product );
+								$result = self::get_product_setting( $name, $product );
 							}
-
 							break;
 					}
+
+					return $result;
+				}
+
+				/**
+				 * Check if the product should recurse to parent for settings.
+				 *
+				 * @param WC_Product $product Product object.
+				 *
+				 * @return int|false Parent ID or false.
+				 */
+				private static function should_recurse_parent( $product ) {
+					$quantity = self::get_quantity( $product );
+
+					if ( $quantity === 'parent' && is_a( $product, 'WC_Product_Variation' ) ) {
+						return $product->get_parent_id() ?: false;
+					}
+
+					return false;
+				}
+
+				public static function get_min( $product, $min = 0 ) {
+					[ $product_id, $product ] = self::resolve_product( $product );
+
+					if ( $parent_id = self::should_recurse_parent( $product ) ) {
+						return self::get_min( $parent_id );
+					}
+
+					$woopq_min = self::resolve_setting( $product_id, $product, 'min', $min, 'min' );
 
 					if ( ! is_numeric( $woopq_min ) ) {
 						// leave blank to disable
@@ -379,48 +439,15 @@ if ( ! function_exists( 'woopq_init' ) ) {
 				public static function get_max( $product, $max = 100000, $max_value = null ) {
 					[ $product_id, $product ] = self::resolve_product( $product );
 
-					$woopq_max = $max;
-					$quantity  = self::get_quantity( $product );
-
 					if ( ! $max_value ) {
 						$max_value = $product->get_max_purchase_quantity();
 					}
 
-					switch ( $quantity ) {
-						case 'disable':
-							break;
-						case 'global':
-						case 'default':
-							if ( self::get_type( $product_id ) !== 'default' ) {
-								$woopq_values = self::get_values( $product );
-
-								if ( ! empty( $woopq_values ) ) {
-									$woopq_max = max( array_column( $woopq_values, 'value' ) );
-								}
-							} else {
-								$woopq_max = self::get_global_setting( 'max', $product );
-							}
-
-							break;
-						case 'parent':
-							if ( is_a( $product, 'WC_Product_Variation' ) && ( $parent_id = $product->get_parent_id() ) ) {
-								return self::get_max( wc_get_product( $parent_id ), $max, $max_value );
-							}
-
-							break;
-						default:
-							if ( self::get_type( $product_id ) !== 'default' ) {
-								$woopq_values = self::get_values( $product );
-
-								if ( ! empty( $woopq_values ) ) {
-									$woopq_max = max( array_column( $woopq_values, 'value' ) );
-								}
-							} else {
-								$woopq_max = self::get_product_setting( 'max', $product );
-							}
-
-							break;
+					if ( $parent_id = self::should_recurse_parent( $product ) ) {
+						return self::get_max( $parent_id, $max, $max_value );
 					}
+
+					$woopq_max = self::resolve_setting( $product_id, $product, 'max', $max, 'max' );
 
 					if ( ! is_numeric( $woopq_max ) ) {
 						// leave blank to disable
@@ -443,28 +470,11 @@ if ( ! function_exists( 'woopq_init' ) ) {
 				public static function get_step( $product, $step = 1 ) {
 					[ $product_id, $product ] = self::resolve_product( $product );
 
-					$woopq_step = $step;
-					$quantity   = self::get_quantity( $product );
-
-					switch ( $quantity ) {
-						case 'disable':
-							break;
-						case 'global':
-						case 'default':
-							$woopq_step = self::get_global_setting( 'step', $product );
-
-							break;
-						case 'parent':
-							if ( is_a( $product, 'WC_Product_Variation' ) && ( $parent_id = $product->get_parent_id() ) ) {
-								return self::get_step( wc_get_product( $parent_id ) );
-							}
-
-							break;
-						default:
-							$woopq_step = self::get_product_setting( 'step', $product );
-
-							break;
+					if ( $parent_id = self::should_recurse_parent( $product ) ) {
+						return self::get_step( $parent_id );
 					}
+
+					$woopq_step = self::resolve_setting( $product_id, $product, 'step', $step );
 
 					if ( ! is_numeric( $woopq_step ) ) {
 						// leave blank to disable
@@ -483,28 +493,11 @@ if ( ! function_exists( 'woopq_init' ) ) {
 				public static function get_value( $product, $value = 1 ) {
 					[ $product_id, $product ] = self::resolve_product( $product );
 
-					$woopq_value = $value;
-					$quantity    = self::get_quantity( $product );
-
-					switch ( $quantity ) {
-						case 'disable':
-							break;
-						case 'global':
-						case 'default':
-							$woopq_value = self::get_global_setting( 'value', $product );
-
-							break;
-						case 'parent':
-							if ( is_a( $product, 'WC_Product_Variation' ) && ( $parent_id = $product->get_parent_id() ) ) {
-								return self::get_value( wc_get_product( $parent_id ) );
-							}
-
-							break;
-						default:
-							$woopq_value = self::get_product_setting( 'value', $product );
-
-							break;
+					if ( $parent_id = self::should_recurse_parent( $product ) ) {
+						return self::get_value( $parent_id );
 					}
+
+					$woopq_value = self::resolve_setting( $product_id, $product, 'value', $value );
 
 					if ( ! is_numeric( $woopq_value ) ) {
 						// leave blank to disable
@@ -523,27 +516,11 @@ if ( ! function_exists( 'woopq_init' ) ) {
 				public static function get_values( $product, $values = '' ) {
 					[ $product_id, $product ] = self::resolve_product( $product );
 
-					$quantity = self::get_quantity( $product );
-
-					switch ( $quantity ) {
-						case 'disable':
-							break;
-						case 'global':
-						case 'default':
-							$values = self::get_global_setting( 'values', $product );
-
-							break;
-						case 'parent':
-							if ( is_a( $product, 'WC_Product_Variation' ) && ( $parent_id = $product->get_parent_id() ) ) {
-								return self::get_values( wc_get_product( $parent_id ) );
-							}
-
-							break;
-						default:
-							$values = self::get_product_setting( 'values', $product );
-
-							break;
+					if ( $parent_id = self::should_recurse_parent( $product ) ) {
+						return self::get_values( $parent_id );
 					}
+
+					$values = self::resolve_setting( $product_id, $product, 'values', $values );
 
 					$woopq_values = [];
 					$is_decimal   = self::is_decimal();
@@ -615,31 +592,13 @@ if ( ! function_exists( 'woopq_init' ) ) {
 					// default setting
 					$setting = self::get_setting( $name );
 
-					if ( $product ) {
-						// check rules for product first
-						$rules = self::get_setting( 'rules', [] );
-						unset( $rules['placeholder'] );
-
-						if ( ! empty( $rules ) ) {
-							$default_rule = self::get_default_rule();
-
-							// check apply rule
-							foreach ( $rules as $rule ) {
-								$rule = array_merge( $default_rule, $rule );
-
-								if ( self::check_apply( $product, $rule ) && self::check_roles( $rule ) && isset( $rule[ $name ] ) ) {
-									$setting = $rule[ $name ];
-									break;
-								}
-							}
-						}
-					}
+					// global rules skipped
 
 					return apply_filters( 'woopq_get_global_setting', $setting, $name, $product );
 				}
 
 				public static function get_product_setting( $name = 'type', $product = null ) {
-					[ $product_id ] = self::resolve_product( $product );
+					[ $product_id, $product ] = self::resolve_product( $product );
 
 					$setting = get_post_meta( $product_id, '_woopq_' . $name, true );
 					$setting = $setting !== '' ? $setting : 'default';
@@ -661,7 +620,7 @@ if ( ! function_exists( 'woopq_init' ) ) {
 						}
 					}
 
-					return apply_filters( 'get_product_setting', $setting, $name, $product );
+					return apply_filters( 'woopq_get_product_setting', $setting, $name, $product );
 				}
 
 				public static function check_apply( $product, $rule ) {
@@ -669,7 +628,7 @@ if ( ! function_exists( 'woopq_init' ) ) {
 					$apply_val = $rule['apply_val'] ?? [];
 					$apply_inc = $rule['apply_inc'] ?? 'either';
 
-					[ $product_id ] = self::resolve_product( $product );
+					[ $product_id, $product ] = self::resolve_product( $product );
 
 					if ( ! $product_id ) {
 						return false;
@@ -680,17 +639,69 @@ if ( ! function_exists( 'woopq_init' ) ) {
 					}
 
 					if ( $apply_inc === 'all' ) {
-						foreach ( $apply_val as $term ) {
-							if ( ! has_term( $term, $apply, $product_id ) ) {
-								return false;
+						if ( $product->is_type( 'variation' ) ) {
+							// all attributes
+							$all_attrs = [];
+							$attrs     = $product->get_attributes();
+							$parent_id = $product->get_parent_id();
+
+							if ( $taxonomies = get_object_taxonomies( 'product', 'objects' ) ) {
+								foreach ( $taxonomies as $taxonomy ) {
+									if ( str_starts_with( $taxonomy->name, 'pa_' ) ) {
+										$all_attrs[] = $taxonomy->name;
+									}
+								}
+							}
+
+							if ( in_array( $apply, $all_attrs ) ) {
+								if ( empty( $attrs[ $apply ] ) || ! in_array( $attrs[ $apply ], $apply_val ) ) {
+									return false;
+								}
+							} else {
+								foreach ( $apply_val as $term ) {
+									if ( ! has_term( $term, $apply, $product_id ) && ! has_term( $term, $apply, $parent_id ) ) {
+										return false;
+									}
+								}
+							}
+						} else {
+							foreach ( $apply_val as $term ) {
+								if ( ! has_term( $term, $apply, $product_id ) ) {
+									return false;
+								}
 							}
 						}
 
 						return true;
 					} else {
 						// either
-						if ( has_term( $apply_val, $apply, $product_id ) ) {
-							return true;
+						if ( $product->is_type( 'variation' ) ) {
+							// all attributes
+							$all_attrs = [];
+							$attrs     = $product->get_attributes();
+							$parent_id = $product->get_parent_id();
+
+							if ( $taxonomies = get_object_taxonomies( 'product', 'objects' ) ) {
+								foreach ( $taxonomies as $taxonomy ) {
+									if ( str_starts_with( $taxonomy->name, 'pa_' ) ) {
+										$all_attrs[] = $taxonomy->name;
+									}
+								}
+							}
+
+							if ( in_array( $apply, $all_attrs ) ) {
+								if ( ! empty( $attrs[ $apply ] ) && in_array( $attrs[ $apply ], $apply_val ) ) {
+									return true;
+								}
+							} else {
+								if ( has_term( $apply_val, $apply, $product_id ) || has_term( $apply_val, $apply, $parent_id ) ) {
+									return true;
+								}
+							}
+						} else {
+							if ( has_term( $apply_val, $apply, $product_id ) ) {
+								return true;
+							}
 						}
 					}
 
@@ -770,11 +781,9 @@ if ( ! function_exists( 'woopq_init' ) ) {
 				}
 
 				public static function add_to_cart_validation( $passed, $product_id, $qty, $variation_id = 0 ) {
-					if ( $variation_id ) {
-						$product_id = $variation_id;
-					}
+					$product_id = $variation_id ?: $product_id;
 
-					if ( ( self::get_quantity_validation( $product_id ) !== 'disable' ) && apply_filters( 'woopq_add_to_cart_validation', true, $product_id, $qty ) ) {
+					if ( ( self::get_quantity( $product_id ) !== 'disable' ) && apply_filters( 'woopq_add_to_cart_validation', true, $product_id, $qty ) ) {
 						// only validate when active quantity settings
 						$product = wc_get_product( $product_id );
 						$added   = self::qty_in_cart( $product_id );
@@ -884,13 +893,10 @@ if ( ! function_exists( 'woopq_init' ) ) {
 				}
 
 				public static function available_variation( $available, $variable, $variation ) {
-					// default
-					$available['min_qty'] = self::get_min( $variation );
-					$available['max_qty'] = self::get_max( $variation );
+					// Resolve once, reuse for both WC default and custom keys
+					$available['min_qty'] = $available['woopq_min'] = self::get_min( $variation );
+					$available['max_qty'] = $available['woopq_max'] = self::get_max( $variation );
 
-					// extra
-					$available['woopq_min']   = self::get_min( $variation );
-					$available['woopq_max']   = self::get_max( $variation );
 					$available['woopq_step']  = self::get_step( $variation );
 					$available['woopq_value'] = self::get_value( $variation );
 

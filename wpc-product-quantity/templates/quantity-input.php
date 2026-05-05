@@ -21,7 +21,7 @@ $qty_sources = [
         'woosb_qty'     => 'WPC Product Bundles',
         'woobt_qty'     => 'WPC Frequently Bought Together',
         'woosg_qty'     => 'WPC Grouped Product',
-        'overwrite_qty' => 'Overwrite'
+        'overwrite_qty' => 'Override'
 ];
 
 foreach ( $qty_sources as $source => $comment ) {
@@ -96,7 +96,7 @@ if ( $max_value && $min_value == $max_value ) {
             $s            = 1;
 
             foreach ( $woopq_values as $woopq_value ) {
-                echo '<option value="' . esc_attr( $woopq_value['value'] ) . '" ' . ( $input_value == $woopq_value['value'] ? 'selected' : '' ) . ' ' . ( ( $s > 1 ) && ( $max_value > 0 && (float) $woopq_value['value'] > $max_value ) ? 'disabled' : '' ) . '>' . $woopq_value['name'] . '</option>';
+                echo '<option value="' . esc_attr( $woopq_value['value'] ) . '" ' . ( $input_value == $woopq_value['value'] ? 'selected' : '' ) . ' ' . ( ( $s > 1 ) && ( $max_value > 0 && (float) $woopq_value['value'] > $max_value ) ? 'disabled' : '' ) . '>' . esc_html( $woopq_value['name'] ) . '</option>';
                 $s ++;
             }
             ?>
@@ -110,7 +110,7 @@ if ( $max_value && $min_value == $max_value ) {
         do_action( 'woopq_before_radio_field' );
 
         foreach ( $woopq_values as $woopq_value ) {
-            echo '<label><input type="radio" name="' . esc_attr( $input_name ) . '" value="' . esc_attr( $woopq_value['value'] ) . '" ' . ( $input_value == $woopq_value['value'] ? 'checked' : '' ) . ' ' . ( ( $s > 1 ) && ( $max_value > 0 && (float) $woopq_value['value'] > $max_value ) ? 'disabled' : '' ) . '/> ' . $woopq_value['name'] . '</label>';
+            echo '<label><input type="radio" name="' . esc_attr( $input_name ) . '" value="' . esc_attr( $woopq_value['value'] ) . '" ' . ( $input_value == $woopq_value['value'] ? 'checked' : '' ) . ' ' . ( ( $s > 1 ) && ( $max_value > 0 && (float) $woopq_value['value'] > $max_value ) ? 'disabled' : '' ) . '/> ' . esc_html( $woopq_value['name'] ) . '</label>';
             $s ++;
         }
 

@@ -3,8 +3,8 @@ Contributors: wpclever
 Donate link: https://wpclever.net
 Tags: woocommerce, wpc, quantity, qty
 Tested up to: 6.9
-Version: 5.2.0
-Stable tag: 5.2.0
+Version: 6.0.0
+Stable tag: 6.0.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -96,8 +96,12 @@ Please try other plugins from us:
 
 == Changelog ==
 
-= 5.2.0 =
+= 6.0.0 =
 * Updated: Optimize the code for better performance
+* Updated: Compatible with WP 6.9 & Woo 10.7
+
+= 5.2.0 =
+* Updated: Optimized the code
 
 = 5.1.6 =
 * Fixed: Minor CSS/JS issues in the backend

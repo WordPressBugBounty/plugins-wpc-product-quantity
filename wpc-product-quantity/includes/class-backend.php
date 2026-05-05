@@ -89,6 +89,9 @@ if ( ! class_exists( 'WPCleverWoopq_Backend' ) ) {
                     'wc-enhanced-select',
                     'selectWoo',
             ], WOOPQ_VERSION, true );
+            wp_localize_script( 'woopq-backend', 'woopq_admin_vars', [
+                    'nonce' => wp_create_nonce( 'woopq_backend' ),
+            ] );
         }
 
         /**
@@ -441,6 +444,10 @@ if ( ! class_exists( 'WPCleverWoopq_Backend' ) ) {
          * AJAX handler: search taxonomy terms.
          */
         public function ajax_search_term() {
+            if ( ! check_ajax_referer( 'woopq_backend', 'nonce', false ) || ! current_user_can( 'manage_woocommerce' ) ) {
+                wp_send_json_error( 'Unauthorized', 403 );
+            }
+
             $return = [];
 
             $args = [
@@ -467,6 +474,10 @@ if ( ! class_exists( 'WPCleverWoopq_Backend' ) ) {
          * AJAX handler: add a new rule row.
          */
         public function ajax_add_rule() {
+            if ( ! check_ajax_referer( 'woopq_backend', 'nonce', false ) || ! current_user_can( 'manage_woocommerce' ) ) {
+                wp_die( - 1, 403 );
+            }
+
             $rule         = [];
             $rule_data    = isset( $_POST['rule_data'] ) ? wp_unslash( $_POST['rule_data'] ) : '';
             $product_id   = absint( $_POST['product_id'] ?? 0 );
@@ -545,7 +556,7 @@ if ( ! class_exists( 'WPCleverWoopq_Backend' ) ) {
                     <?php if ( ! $product_id ) { ?>
                         <div class="woopq-item-line">
                             <div class="woopq-item-input">
-                                <span style="color: #c9356e;">* Global rules only available on the Premium Version.<a
+                                <span style="color: #c9356e;font-size: 13px;font-style: italic;">* Global rules only available on the Premium Version.<a
                                             href="https://wpclever.net/downloads/product-quantity?utm_source=pro&utm_medium=woopq&utm_campaign=wporg"
                                             target="_blank">Click here</a> to buy, just $29!</span>
                             </div>
@@ -634,7 +645,7 @@ if ( ! class_exists( 'WPCleverWoopq_Backend' ) ) {
                             <label>
 								<textarea name="<?php echo esc_attr( $name . '[' . $key . '][values]' ); ?>"
                                           rows="10" cols="50"
-                                          style="float: none; width: 100%; height: 200px"><?php echo $rule['values']; ?></textarea>
+                                          style="float: none; width: 100%; height: 200px"><?php echo esc_textarea( $rule['values'] ); ?></textarea>
                             </label>
                             <p class="description"
                                style="margin-left: 0"><?php esc_html_e( 'These values will be used for select/radio type. Enter each value in one line and can use the range e.g "10-20".', 'wpc-product-quantity' ); ?></p>
@@ -792,7 +803,7 @@ if ( ! class_exists( 'WPCleverWoopq_Backend' ) ) {
          */
         public static function product_settings( $product_id, $is_variation = false ) {
             $step     = WPCleverWoopq::get_setting( 'decimal', 'no' ) === 'yes' ? '0.000001' : '1';
-            $quantity = WPCleverWoopq::get_quantity( $product_id, $is_variation );
+            $quantity = WPCleverWoopq::get_quantity( $product_id );
             $type     = WPCleverWoopq::get_type( $product_id );
             $rules    = (array) ( get_post_meta( $product_id, '_woopq_rules', true ) ?: [] );
             unset( $rules['placeholder'] );
@@ -815,11 +826,11 @@ if ( ! class_exists( 'WPCleverWoopq_Backend' ) ) {
                             <label>
                                 <select name="<?php echo esc_attr( '_woopq_quantity' . $name ); ?>"
                                         class="woopq_active_select">
-                                    <option value="default" <?php selected( $quantity, 'default' ); ?>><?php esc_html_e( 'Default', 'wpc-product-quantity' ); ?></option>
+                                    <option value="default" <?php selected( $quantity, 'default' ); ?>><?php esc_html_e( 'Global', 'wpc-product-quantity' ); ?></option>
                                     <option value="parent" <?php selected( $quantity, 'parent' ); ?>><?php esc_html_e( 'Parent', 'wpc-product-quantity' ); ?></option>
                                     <option value="disable" <?php selected( $quantity, 'disable' ); ?>><?php esc_html_e( 'Disable', 'wpc-product-quantity' ); ?></option>
                                     <option value="overwrite" <?php selected( $quantity, 'overwrite' ); ?>
-                                            disabled><?php esc_html_e( 'Overwrite', 'wpc-product-quantity' ); ?></option>
+                                            disabled><?php esc_html_e( 'Override', 'wpc-product-quantity' ); ?></option>
                                 </select> </label>
                         <?php } else { ?>
                             <div class="woopq_active_wrapper">
@@ -828,7 +839,7 @@ if ( ! class_exists( 'WPCleverWoopq_Backend' ) ) {
                                         <input name="<?php echo esc_attr( '_woopq_quantity' . $name ); ?>"
                                                type="radio" class="woopq_active_input"
                                                value="default" <?php checked( $quantity, 'default' ); ?>/>
-                                        <?php esc_html_e( 'Default', 'wpc-product-quantity' ); ?>
+                                        <?php esc_html_e( 'Global', 'wpc-product-quantity' ); ?>
                                     </label> (<a
                                             href="<?php echo esc_url( admin_url( 'admin.php?page=wpclever-woopq&tab=settings' ) ); ?>"
                                             target="_blank"><?php esc_html_e( 'settings', 'wpc-product-quantity' ); ?></a>)
@@ -846,18 +857,128 @@ if ( ! class_exists( 'WPCleverWoopq_Backend' ) ) {
                                         <input name="<?php echo esc_attr( '_woopq_quantity' . $name ); ?>"
                                                type="radio" class="woopq_active_input" disabled
                                                value="overwrite" <?php checked( $quantity, 'overwrite' ); ?>/>
-                                        <?php esc_html_e( 'Overwrite', 'wpc-product-quantity' ); ?>
+                                        <?php esc_html_e( 'Override', 'wpc-product-quantity' ); ?>
                                     </label>
                                 </div>
                             </div>
                         <?php } ?>
-                        <div style="color: #c9356e; padding-left: 0; padding-right: 0; margin-top: 10px">You only can
+                        <div style="color: #c9356e; padding-left: 0; padding-right: 0; margin-top: 10px; font-size: 13px; font-style: italic">You only can
                             use the
                             <a href="<?php echo esc_url( admin_url( 'admin.php?page=wpclever-woopq&tab=settings' ) ); ?>"
                                target="_blank">default settings</a> for all products and variations.<br/>Quantity
                             settings at a product or variation basis only available on the Premium Version.
                             <a href="https://wpclever.net/downloads/product-quantity?utm_source=pro&utm_medium=woopq&utm_campaign=wporg"
                                target="_blank">Click here</a> to buy, just $29!
+                        </div>
+                    </div>
+                </div>
+                <div class="woopq_show_if_overwrite">
+                    <div class="woopq-rules-wrapper">
+                        <div class="woopq-add-rule">
+                            <input type="button" class="button woopq-add-rule-btn"
+                                   data-product_id="<?php echo esc_attr( $product_id ); ?>"
+                                   data-is_variation="<?php echo esc_attr( $is_variation ? '1' : '0' ); ?>"
+                                   value="<?php esc_attr_e( '+ Add rule', 'wpc-product-quantity' ); ?>">
+                        </div>
+                        <div class="woopq-items-wrapper">
+                            <div class="woopq-items woopq-rules">
+                                <?php
+                                if ( ! empty( $rules ) ) {
+                                    foreach ( $rules as $key => $rule ) {
+                                        self::rule( $key, $rule, $product_id, $is_variation );
+                                    }
+                                }
+                                ?>
+                            </div>
+                            <?php
+                            // Add a placeholder rule, so you can remove all other rules
+                            if ( $is_variation ) {
+                                echo '<input type="hidden" name="_woopq_rules_v[' . $product_id . '][placeholder][type]" value="none"/>';
+                            } else {
+                                echo '<input type="hidden" name="_woopq_rules[placeholder][type]" value="none"/>';
+                            }
+                            ?>
+                        </div>
+                        <div class="woopq-items-wrapper">
+                            <div class="woopq-items">
+                                <div class="woopq-item woopq-item-default woopq_settings_form active">
+                                    <div class="woopq-item-header">
+                                        <span class="woopq-item-move ui-sortable-handle"><?php esc_html_e( 'move', 'wpc-product-quantity' ); ?></span>
+                                        <span class="woopq-item-name"><span
+                                                    class="woopq-item-name-key">default</span></span>
+                                    </div>
+                                    <div class="woopq-item-content">
+                                        <div class="woopq-item-line">
+                                            <div class="woopq-item-label"><?php esc_html_e( 'Type', 'wpc-product-quantity' ); ?></div>
+                                            <div class="woopq-item-input">
+                                                <label>
+                                                    <select name="<?php echo esc_attr( '_woopq_type' . $name ); ?>"
+                                                            class="woopq_type">
+                                                        <option value="default" <?php selected( $type, 'default' ); ?>><?php esc_html_e( 'Input (Default)', 'wpc-product-quantity' ); ?></option>
+                                                        <option value="select" <?php selected( $type, 'select' ); ?>><?php esc_html_e( 'Select', 'wpc-product-quantity' ); ?></option>
+                                                        <option value="radio" <?php selected( $type, 'radio' ); ?>><?php esc_html_e( 'Radio', 'wpc-product-quantity' ); ?></option>
+                                                    </select> </label>
+                                            </div>
+                                        </div>
+                                        <div class="woopq-item-line woopq_show_if_type woopq_show_if_type_select woopq_show_if_type_radio">
+                                            <div class="woopq-item-label"><?php esc_html_e( 'Values', 'wpc-product-quantity' ); ?></div>
+                                            <div class="woopq-item-input">
+                                                <label>
+													<textarea
+                                                            name="<?php echo esc_attr( '_woopq_values' . $name ); ?>"
+                                                            rows="10"
+                                                            cols="50"><?php echo esc_textarea( get_post_meta( $product_id, '_woopq_values', true ) ); ?></textarea>
+                                                </label>
+                                                <p class="description"><?php esc_html_e( 'These values will be used for select/radio type. Enter each value in one line and can use the range e.g "10-20".', 'wpc-product-quantity' ); ?></p>
+                                            </div>
+                                        </div>
+                                        <div class="woopq-item-line woopq_show_if_type woopq_show_if_type_default">
+                                            <div class="woopq-item-label"><?php esc_html_e( 'Minimum', 'wpc-product-quantity' ); ?></div>
+                                            <div class="woopq-item-input">
+                                                <label>
+                                                    <input type="number"
+                                                           name="<?php echo esc_attr( '_woopq_min' . $name ); ?>"
+                                                           min="0" step="<?php echo esc_attr( $step ); ?>"
+                                                           value="<?php echo esc_attr( get_post_meta( $product_id, '_woopq_min', true ) ); ?>"/>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="woopq-item-line woopq_show_if_type woopq_show_if_type_default">
+                                            <div class="woopq-item-label"><?php esc_html_e( 'Step', 'wpc-product-quantity' ); ?></div>
+                                            <div class="woopq-item-input">
+                                                <label>
+                                                    <input type="number"
+                                                           name="<?php echo esc_attr( '_woopq_step' . $name ); ?>"
+                                                           min="0" step="<?php echo esc_attr( $step ); ?>"
+                                                           value="<?php echo esc_attr( get_post_meta( $product_id, '_woopq_step', true ) ); ?>"/>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="woopq-item-line woopq_show_if_type woopq_show_if_type_default">
+                                            <div class="woopq-item-label"><?php esc_html_e( 'Maximum', 'wpc-product-quantity' ); ?></div>
+                                            <div class="woopq-item-input">
+                                                <label>
+                                                    <input type="number"
+                                                           name="<?php echo esc_attr( '_woopq_max' . $name ); ?>"
+                                                           min="0" step="<?php echo esc_attr( $step ); ?>"
+                                                           value="<?php echo esc_attr( get_post_meta( $product_id, '_woopq_max', true ) ); ?>"/>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="woopq-item-line">
+                                            <div class="woopq-item-label"><?php esc_html_e( 'Default value', 'wpc-product-quantity' ); ?></div>
+                                            <div class="woopq-item-input">
+                                                <label>
+                                                    <input type="number"
+                                                           name="<?php echo esc_attr( '_woopq_value' . $name ); ?>"
+                                                           min="0" step="<?php echo esc_attr( $step ); ?>"
+                                                           value="<?php echo esc_attr( get_post_meta( $product_id, '_woopq_value', true ) ); ?>"/>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -886,20 +1007,6 @@ if ( ! class_exists( 'WPCleverWoopq_Backend' ) ) {
                 } else {
                     delete_post_meta( $post_id, $field );
                 }
-            }
-
-            // array field
-            if ( isset( $_POST['_woopq_rules'] ) ) {
-                update_post_meta( $post_id, '_woopq_rules', WPCleverWoopq::sanitize_array( wp_unslash( $_POST['_woopq_rules'] ) ) );
-            } else {
-                delete_post_meta( $post_id, '_woopq_rules' );
-            }
-
-            // textarea field
-            if ( isset( $_POST['_woopq_values'] ) ) {
-                update_post_meta( $post_id, '_woopq_values', sanitize_textarea_field( wp_unslash( $_POST['_woopq_values'] ) ) );
-            } else {
-                delete_post_meta( $post_id, '_woopq_values' );
             }
         }
 

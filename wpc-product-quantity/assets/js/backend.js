@@ -11,7 +11,7 @@
     $(document).on('change',
         '.woopq_active_input, .woopq_active_select, select.woopq_type',
         function () {
-            init_options();
+            init_options($(this).closest('.woopq_settings_form'));
         });
 
     $(document).on('change', '.woopq_apply', function () {
@@ -28,6 +28,7 @@
 
         $.post(ajaxurl, {
             action: 'woopq_add_rule',
+            nonce: woopq_admin_vars.nonce,
             product_id: product_id,
             is_variation: is_variation,
         }, function (response) {
@@ -53,6 +54,7 @@
 
         $.post(ajaxurl, {
             action: 'woopq_add_rule',
+            nonce: woopq_admin_vars.nonce,
             product_id: product_id,
             is_variation: is_variation,
             rule_data: rule_data,
@@ -107,6 +109,7 @@
                     url: ajaxurl, dataType: 'json', delay: 250, data: function (params) {
                         return {
                             q: params.term, action: 'woopq_search_term', taxonomy: apply,
+                            nonce: woopq_admin_vars.nonce,
                         };
                     }, processResults: function (data) {
                         var options = [];
@@ -155,8 +158,10 @@
         $item.find('.woopq-item-name-apply').html(apply_label);
     }
 
-    function init_options() {
-        $('.woopq_active_input:checked').each(function () {
+    function init_options($context) {
+        $context = $context || $(document);
+
+        $context.find('.woopq_active_input:checked').addBack('.woopq_active_input:checked').each(function () {
             if ($(this).val() == 'overwrite') {
                 $(this).closest('.woopq_settings_form').find('.woopq_show_if_overwrite').show();
             } else {
@@ -164,7 +169,7 @@
             }
         });
 
-        $('.woopq_active_select').each(function () {
+        $context.find('.woopq_active_select').addBack('.woopq_active_select').each(function () {
             if ($(this).val() == 'overwrite') {
                 $(this).closest('.woopq_settings_form').find('.woopq_show_if_overwrite').show();
             } else {
@@ -172,7 +177,7 @@
             }
         });
 
-        $('select.woopq_type').each(function () {
+        $context.find('select.woopq_type').addBack('select.woopq_type').each(function () {
             var _val = $(this).val();
 
             $(this).closest('.woopq_settings_form').find('.woopq_show_if_type').hide();
