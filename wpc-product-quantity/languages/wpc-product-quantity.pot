@@ -2,14 +2,14 @@
 # This file is distributed under the GPLv2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: WPC Product Quantity for WooCommerce 6.0.0\n"
+"Project-Id-Version: WPC Product Quantity for WooCommerce 6.0.1\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/wpc-product-quantity\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-05-05T03:55:30+00:00\n"
+"POT-Creation-Date: 2026-05-28T04:25:41+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: wpc-product-quantity\n"
@@ -346,91 +346,91 @@ msgid "Product quantity"
 msgstr ""
 
 #. translators: min
-#: wpc-product-quantity.php:798
+#: wpc-product-quantity.php:800
 #, php-format
 msgid "You can't add less than %1$s &times; \"%2$s\" to the cart."
 msgstr ""
 
 #. translators: max
-#: wpc-product-quantity.php:804
+#: wpc-product-quantity.php:806
 #, php-format
 msgid "You can't add more than %1$s &times; \"%2$s\" to the cart."
 msgstr ""
 
 #. translators: invalid
-#: wpc-product-quantity.php:813
-#: wpc-product-quantity.php:824
+#: wpc-product-quantity.php:815
+#: wpc-product-quantity.php:826
 #, php-format
 msgid "You can't add %1$s &times; \"%2$s\" to the cart."
 msgstr ""
 
 #. translators: %s: product name
-#: wpc-product-quantity.php:862
+#: wpc-product-quantity.php:864
 #, php-format
 msgctxt "Item name in quotes"
 msgid "&ldquo;%s&rdquo;"
 msgstr ""
 
 #. translators: %s: product name
-#: wpc-product-quantity.php:868
+#: wpc-product-quantity.php:870
 #, php-format
 msgid "%s has been added to your cart."
 msgid_plural "%s have been added to your cart."
 msgstr[0] ""
 msgstr[1] ""
 
-#: wpc-product-quantity.php:872
+#: wpc-product-quantity.php:874
 msgid "Continue shopping"
 msgstr ""
 
-#: wpc-product-quantity.php:874
+#: wpc-product-quantity.php:876
 msgid "View cart"
 msgstr ""
 
-#: wpc-product-quantity.php:945
+#: wpc-product-quantity.php:947
 msgid "Before wrapper"
 msgstr ""
 
-#: wpc-product-quantity.php:946
+#: wpc-product-quantity.php:948
 msgid "After wrapper"
 msgstr ""
 
-#: wpc-product-quantity.php:947
+#: wpc-product-quantity.php:949
 msgid "Before quantity input"
 msgstr ""
 
-#: wpc-product-quantity.php:948
+#: wpc-product-quantity.php:950
 msgid "After quantity input"
 msgstr ""
 
-#: wpc-product-quantity.php:949
+#: wpc-product-quantity.php:951
 msgid "Before hidden field"
 msgstr ""
 
-#: wpc-product-quantity.php:950
+#: wpc-product-quantity.php:952
 msgid "After hidden field"
 msgstr ""
 
-#: wpc-product-quantity.php:951
+#: wpc-product-quantity.php:953
 msgid "Before select field"
 msgstr ""
 
-#: wpc-product-quantity.php:952
+#: wpc-product-quantity.php:954
 msgid "After select field"
 msgstr ""
 
-#: wpc-product-quantity.php:953
+#: wpc-product-quantity.php:955
 msgid "Before radio field"
 msgstr ""
 
-#: wpc-product-quantity.php:954
+#: wpc-product-quantity.php:956
 msgid "After radio field"
 msgstr ""
 
-#: wpc-product-quantity.php:955
+#: wpc-product-quantity.php:957
 msgid "Before input field"
 msgstr ""
 
-#: wpc-product-quantity.php:956
+#: wpc-product-quantity.php:958
 msgid "After input field"
 msgstr ""
