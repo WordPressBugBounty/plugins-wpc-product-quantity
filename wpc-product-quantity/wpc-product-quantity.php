@@ -3,7 +3,7 @@
 Plugin Name: WPC Product Quantity for WooCommerce
 Plugin URI: https://wpclever.net/
 Description: WPC Product Quantity provides powerful controls for product quantity.
-Version: 6.0.1
+Version: 6.0.2
 Author: WPClever
 Author URI: https://wpclever.net
 Text Domain: wpc-product-quantity
@@ -19,7 +19,7 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 defined( 'ABSPATH' ) || exit;
 
-! defined( 'WOOPQ_VERSION' ) && define( 'WOOPQ_VERSION', '6.0.1' );
+! defined( 'WOOPQ_VERSION' ) && define( 'WOOPQ_VERSION', '6.0.2' );
 ! defined( 'WOOPQ_LITE' ) && define( 'WOOPQ_LITE', __FILE__ );
 ! defined( 'WOOPQ_FILE' ) && define( 'WOOPQ_FILE', __FILE__ );
 ! defined( 'WOOPQ_URI' ) && define( 'WOOPQ_URI', plugin_dir_url( __FILE__ ) );
@@ -72,7 +72,6 @@ if ( ! function_exists( 'woopq_init' ) ) {
 				function __construct() {
 					self::$settings = (array) get_option( 'woopq_settings', [] );
 
-					add_action( 'init', [ $this, 'init' ] );
 
 					// enqueue frontend
 					add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_scripts' ], 99 );
@@ -122,12 +121,6 @@ if ( ! function_exists( 'woopq_init' ) ) {
 						WPCleverWoopq_Backend::instance();
 					}
 				}
-
-				function init() {
-					// load text-domain
-					load_plugin_textdomain( 'wpc-product-quantity', false, basename( WOOPQ_DIR ) . '/languages/' );
-				}
-
 				/**
 				 * Check if decimal quantities are enabled.
 				 *

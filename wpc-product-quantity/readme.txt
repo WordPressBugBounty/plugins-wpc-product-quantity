@@ -1,10 +1,10 @@
 === WPC Product Quantity for WooCommerce ===
 Contributors: wpclever
 Donate link: https://wpclever.net
-Tags: woocommerce, wpc, quantity, qty
+Tags: woocommerce, wpc, quantity, qty, min max quantity
 Tested up to: 7.0
-Version: 6.0.1
-Stable tag: 6.0.1
+Version: 6.0.2
+Stable tag: 6.0.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -95,6 +95,9 @@ Please try other plugins from us:
 4. Go to WPClever > Product Quantity to make your customization
 
 == Changelog ==
+
+= 6.0.2 =
+* Fixed: Issue with variable/variation
 
 = 6.0.1 =
 * Fixed: Minor CSS/JS issues in the backend
