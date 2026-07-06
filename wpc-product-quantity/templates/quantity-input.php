@@ -48,7 +48,7 @@ if ( $max_value && $min_value == $max_value ) {
             'default' => $default_value,
     ], $product_id );
 
-    echo '<div class="' . esc_attr( $woopq_hidden_class ) . '" ' . WPCleverWoopq()->data_attributes( $woopq_hidden_attrs ) . '>';
+    echo '<div class="' . esc_attr( $woopq_hidden_class ) . '" ' . WPCleverWoopq()->data_attributes( $woopq_hidden_attrs ) . '>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
     do_action( 'woopq_before_hidden_field' );
     echo '<input type="number" id="' . esc_attr( $input_id ) . '" class="qty" name="' . esc_attr( $input_name ) . '" value="' . esc_attr( $min_value ) . '" readonly/>';
     do_action( 'woopq_after_hidden_field' );
@@ -57,8 +57,8 @@ if ( $max_value && $min_value == $max_value ) {
     $type           = 'number';
     $input_value    = max( $min_value ?: $input_value, min( $max_value ?: $input_value, $input_value ) );
     $label          = ! empty( $args['product_name'] ) ? sprintf( /* translators: product name */ esc_html__( '%s quantity', 'wpc-product-quantity' ), wp_strip_all_tags( $args['product_name'] ) ) : esc_html__( 'Quantity', 'wpc-product-quantity' );
-    $woopq_quantity = WPCleverWoopq()->get_quantity( $product_id );
-    $woopq_type     = WPCleverWoopq()->get_type( $product_id );
+    $woopq_quantity = WPCleverWoopq()->get_quantity( absint( $product_id ) );
+    $woopq_type     = WPCleverWoopq()->get_type( absint( $product_id ) );
 
     if ( isset( $woosb_qty ) || isset( $woobt_qty ) || isset( $overwrite_qty ) ) {
         // overwrite by WPC Product Bundles/ WPC Frequently Bought Together
@@ -78,7 +78,7 @@ if ( $max_value && $min_value == $max_value ) {
             'default' => $default_value,
     ], $product_id );
 
-    echo '<div class="' . esc_attr( $woopq_class ) . '" ' . WPCleverWoopq()->data_attributes( $woopq_attrs ) . '>';
+    echo '<div class="' . esc_attr( $woopq_class ) . '" ' . WPCleverWoopq()->data_attributes( $woopq_attrs ) . '>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 
     do_action( 'woopq_before_quantity_input' );
     do_action( 'woocommerce_before_quantity_input_field' );
@@ -92,7 +92,7 @@ if ( $max_value && $min_value == $max_value ) {
         <select id="<?php echo esc_attr( $input_id ); ?>" name="<?php echo esc_attr( $input_name ); ?>" class="qty"
                 title="<?php echo esc_attr_x( 'Qty', 'Product quantity input tooltip', 'wpc-product-quantity' ); ?>">
             <?php
-            $woopq_values = WPCleverWoopq()->get_values( $product_id );
+            $woopq_values = WPCleverWoopq()->get_values( absint( $product_id ) );
             $s            = 1;
 
             foreach ( $woopq_values as $woopq_value ) {
@@ -104,7 +104,7 @@ if ( $max_value && $min_value == $max_value ) {
         <?php
         do_action( 'woopq_after_select_field' );
     } elseif ( $woopq_type === 'radio' ) {
-        $woopq_values = WPCleverWoopq()->get_values( $product_id );
+        $woopq_values = WPCleverWoopq()->get_values( absint( $product_id ) );
         $s            = 1;
 
         do_action( 'woopq_before_radio_field' );
@@ -125,7 +125,7 @@ if ( $max_value && $min_value == $max_value ) {
         }
         ?>
         <input type="<?php echo esc_attr( $type ); ?>"
-                <?php echo $readonly ? 'readonly="readonly"' : ''; ?>
+                <?php echo $readonly ? 'readonly="readonly"' : ''; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
                id="<?php echo esc_attr( $input_id ); ?>"
                class="<?php echo esc_attr( join( ' ', (array) $classes ) ); ?>"
                min="<?php echo esc_attr( $min_value ); ?>"

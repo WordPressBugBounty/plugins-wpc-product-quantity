@@ -135,7 +135,7 @@ if ( ! class_exists( 'WPCleverWoopq_Backend' ) ) {
          * Render the settings page content.
          */
         public function admin_menu_content() {
-            $active_tab = sanitize_key( $_GET['tab'] ?? 'settings' );
+            $active_tab = sanitize_key( wp_unslash( $_GET['tab'] ?? 'settings' ) );
             ?>
             <div class="wpclever_settings_page wrap">
                 <div class="wpclever_settings_page_header">
@@ -160,7 +160,7 @@ if ( ! class_exists( 'WPCleverWoopq_Backend' ) ) {
                     </div>
                 </div>
                 <h2></h2>
-                <?php if ( isset( $_GET['settings-updated'] ) && $_GET['settings-updated'] ) { ?>
+                <?php if ( isset( $_GET['settings-updated'] ) && sanitize_text_field( wp_unslash( $_GET['settings-updated'] ?? '' ) ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended ?>
                     <div class="notice notice-success is-dismissible">
                         <p><?php esc_html_e( 'Settings updated.', 'wpc-product-quantity' ); ?></p>
                     </div>
@@ -479,9 +479,9 @@ if ( ! class_exists( 'WPCleverWoopq_Backend' ) ) {
             }
 
             $rule         = [];
-            $rule_data    = isset( $_POST['rule_data'] ) ? wp_unslash( $_POST['rule_data'] ) : '';
-            $product_id   = absint( $_POST['product_id'] ?? 0 );
-            $is_variation = wc_string_to_bool( $_POST['is_variation'] ?? false );
+            $rule_data    = isset( $_POST['rule_data'] ) ? sanitize_text_field( wp_unslash( $_POST['rule_data'] ?? '' ) ) : '';
+            $product_id   = absint( wp_unslash( $_POST['product_id'] ?? 0 ) );
+            $is_variation = wc_string_to_bool( sanitize_text_field( wp_unslash( $_POST['is_variation'] ?? '' ) ) );
 
             if ( ! empty( $rule_data ) ) {
                 $form_rule = [];
@@ -524,7 +524,7 @@ if ( ! class_exists( 'WPCleverWoopq_Backend' ) ) {
                 $name = '_woopq_rules';
 
                 if ( $is_variation ) {
-                    $name = '_woopq_rules_v[' . $product_id . ']';
+                    $name = '_woopq_rules_v[' . absint( $product_id ) . ']';
                 }
             }
 
@@ -813,8 +813,8 @@ if ( ! class_exists( 'WPCleverWoopq_Backend' ) ) {
             $class = 'woopq_table panel woocommerce_options_panel woopq_product_settings woopq_settings_form';
 
             if ( $is_variation ) {
-                $name  = '_v[' . $product_id . ']';
-                $id    = 'woopq_settings_' . $product_id;
+                $name  = '_v[' . absint( $product_id ) . ']';
+                $id    = 'woopq_settings_' . absint( $product_id );
                 $class = 'woopq_table woopq_product_settings woopq_settings_form';
             }
             ?>
@@ -893,7 +893,7 @@ if ( ! class_exists( 'WPCleverWoopq_Backend' ) ) {
                             <?php
                             // Add a placeholder rule, so you can remove all other rules
                             if ( $is_variation ) {
-                                echo '<input type="hidden" name="_woopq_rules_v[' . $product_id . '][placeholder][type]" value="none"/>';
+                                echo '<input type="hidden" name="_woopq_rules_v[' . absint( $product_id ) . '][placeholder][type]" value="none"/>';
                             } else {
                                 echo '<input type="hidden" name="_woopq_rules[placeholder][type]" value="none"/>';
                             }
@@ -989,6 +989,11 @@ if ( ! class_exists( 'WPCleverWoopq_Backend' ) ) {
         /**
          * Save product meta on product save.
          *
+         * Nonce verification is handled upstream by WooCommerce's
+         * 'woocommerce_process_product_meta' hook infrastructure,
+         * which already verifies the 'woocommerce-meta-nonce' before
+         * this callback is ever invoked.
+         *
          * @param int $post_id Product ID.
          */
         public function process_product_meta( $post_id ) {
@@ -1002,8 +1007,8 @@ if ( ! class_exists( 'WPCleverWoopq_Backend' ) ) {
             ];
 
             foreach ( $text_fields as $field ) {
-                if ( isset( $_POST[ $field ] ) ) {
-                    update_post_meta( $post_id, $field, sanitize_text_field( wp_unslash( $_POST[ $field ] ) ) );
+                if ( isset( $_POST[ $field ] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
+                    update_post_meta( $post_id, $field, sanitize_text_field( wp_unslash( $_POST[ $field ] ) ) ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
                 } else {
                     delete_post_meta( $post_id, $field );
                 }
@@ -1032,6 +1037,11 @@ if ( ! class_exists( 'WPCleverWoopq_Backend' ) ) {
         /**
          * Save variation-level quantity settings.
          *
+         * Nonce verification is handled upstream by WooCommerce's
+         * 'woocommerce_save_product_variation' hook infrastructure,
+         * which already verifies the edit-form nonce before
+         * this callback is ever invoked.
+         *
          * @param int $post_id Variation ID.
          */
         public function save_variation_settings( $post_id ) {
@@ -1045,23 +1055,23 @@ if ( ! class_exists( 'WPCleverWoopq_Backend' ) ) {
             ];
 
             foreach ( $text_fields as $post_key => $meta_key ) {
-                if ( isset( $_POST[ $post_key ][ $post_id ] ) ) {
-                    update_post_meta( $post_id, $meta_key, sanitize_text_field( wp_unslash( $_POST[ $post_key ][ $post_id ] ) ) );
+                if ( isset( $_POST[ $post_key ][ $post_id ] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
+                    update_post_meta( $post_id, $meta_key, sanitize_text_field( wp_unslash( $_POST[ $post_key ][ $post_id ] ) ) ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
                 } else {
                     delete_post_meta( $post_id, $meta_key );
                 }
             }
 
-            // array field
-            if ( isset( $_POST['_woopq_rules_v'][ $post_id ] ) ) {
-                update_post_meta( $post_id, '_woopq_rules', WPCleverWoopq::sanitize_array( wp_unslash( $_POST['_woopq_rules_v'][ $post_id ] ) ) );
+            // array field -- nonce already verified by WooCommerce before this hook fires
+            if ( isset( $_POST['_woopq_rules_v'][ $post_id ] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+                update_post_meta( $post_id, '_woopq_rules', WPCleverWoopq::sanitize_array( wp_unslash( ( $_POST['_woopq_rules_v'] ?? [] )[ $post_id ] ?? '' ) ) ); // phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
             } else {
                 delete_post_meta( $post_id, '_woopq_rules' );
             }
 
             // textarea field
-            if ( isset( $_POST['_woopq_values_v'][ $post_id ] ) ) {
-                update_post_meta( $post_id, '_woopq_values', sanitize_textarea_field( wp_unslash( $_POST['_woopq_values_v'][ $post_id ] ) ) );
+            if ( isset( $_POST['_woopq_values_v'][ $post_id ] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
+                update_post_meta( $post_id, '_woopq_values', sanitize_textarea_field( wp_unslash( ( $_POST['_woopq_values_v'] ?? [] )[ $post_id ] ?? '' ) ) ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
             } else {
                 delete_post_meta( $post_id, '_woopq_values' );
             }

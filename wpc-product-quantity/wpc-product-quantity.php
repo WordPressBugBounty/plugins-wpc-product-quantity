@@ -3,23 +3,23 @@
 Plugin Name: WPC Product Quantity for WooCommerce
 Plugin URI: https://wpclever.net/
 Description: WPC Product Quantity provides powerful controls for product quantity.
-Version: 6.0.2
+Version: 6.0.3
 Author: WPClever
 Author URI: https://wpclever.net
 Text Domain: wpc-product-quantity
 Domain Path: /languages/
 Requires Plugins: woocommerce
-Requires at least: 4.0
+Requires at least: 5.9
 Tested up to: 7.0
 WC requires at least: 3.0
-WC tested up to: 10.8
+WC tested up to: 10.9
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 */
 
 defined( 'ABSPATH' ) || exit;
 
-! defined( 'WOOPQ_VERSION' ) && define( 'WOOPQ_VERSION', '6.0.2' );
+! defined( 'WOOPQ_VERSION' ) && define( 'WOOPQ_VERSION', '6.0.3' );
 ! defined( 'WOOPQ_LITE' ) && define( 'WOOPQ_LITE', __FILE__ );
 ! defined( 'WOOPQ_FILE' ) && define( 'WOOPQ_FILE', __FILE__ );
 ! defined( 'WOOPQ_URI' ) && define( 'WOOPQ_URI', plugin_dir_url( __FILE__ ) );
@@ -60,6 +60,27 @@ if ( ! function_exists( 'woopq_init' ) ) {
 				private static $quantity_cache = [];
 				private static $type_cache = [];
 				private static $parsed_rules = null;
+
+				/**
+				 * Build a role-aware cache key for a given product ID.
+				 * Results that depend on check_roles() differ between guests and logged-in users,
+				 * so the cache key must reflect the current user context.
+				 *
+				 * @param int $product_id Product ID.
+				 *
+				 * @return string Cache key.
+				 */
+				private static function get_role_cache_key( $product_id ) {
+					if ( is_user_logged_in() ) {
+						$roles = wp_get_current_user()->roles;
+						sort( $roles );
+						$role_segment = implode( '_', $roles );
+					} else {
+						$role_segment = 'guest';
+					}
+
+					return $product_id . '|' . $role_segment;
+				}
 
 				public static function instance() {
 					if ( is_null( self::$instance ) ) {
@@ -302,8 +323,12 @@ if ( ! function_exists( 'woopq_init' ) ) {
 				public static function get_type( $product ) {
 					[ $product_id, $product ] = self::resolve_product( $product );
 
-					if ( isset( self::$type_cache[ $product_id ] ) ) {
-						return self::$type_cache[ $product_id ];
+					// Use a role-aware cache key because the result depends on check_roles(),
+					// which varies between guests and logged-in users.
+					$cache_key = self::get_role_cache_key( $product_id );
+
+					if ( isset( self::$type_cache[ $cache_key ] ) ) {
+						return self::$type_cache[ $cache_key ];
 					}
 
 					$woopq_type = 'default';
@@ -321,8 +346,8 @@ if ( ! function_exists( 'woopq_init' ) ) {
 							break;
 						case 'parent':
 							if ( is_a( $product, 'WC_Product_Variation' ) && ( $parent_id = $product->get_parent_id() ) ) {
-								$result                          = self::get_type( $parent_id );
-								self::$type_cache[ $product_id ] = $result;
+								$result                         = self::get_type( $parent_id );
+								self::$type_cache[ $cache_key ] = $result;
 
 								return $result;
 							}
@@ -339,7 +364,7 @@ if ( ! function_exists( 'woopq_init' ) ) {
 
 					$result = apply_filters( 'woopq_type', $woopq_type, $product_id );
 
-					self::$type_cache[ $product_id ] = $result;
+					self::$type_cache[ $cache_key ] = $result;
 
 					return $result;
 				}
@@ -882,9 +907,9 @@ if ( ! function_exists( 'woopq_init' ) ) {
 					global $product;
 					ob_start();
 					woocommerce_quantity_input( [], $product );
-					$woopq_qty = htmlentities( ob_get_clean() );
+					$woopq_qty = ob_get_clean();
 
-					echo '<span class="woopq-quantity-variable" data-qty="' . $woopq_qty . '" style="display: none"></span>';
+					echo '<span class="woopq-quantity-variable" data-qty="' . esc_attr( $woopq_qty ) . '" style="display: none"></span>';
 				}
 
 				public static function available_variation( $available, $variable, $variation ) {
