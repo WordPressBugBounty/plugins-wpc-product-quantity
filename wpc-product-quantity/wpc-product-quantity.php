@@ -3,23 +3,23 @@
 Plugin Name: WPC Product Quantity for WooCommerce
 Plugin URI: https://wpclever.net/
 Description: WPC Product Quantity provides powerful controls for product quantity.
-Version: 6.0.3
+Version: 6.0.4
 Author: WPClever
 Author URI: https://wpclever.net
 Text Domain: wpc-product-quantity
 Domain Path: /languages/
 Requires Plugins: woocommerce
 Requires at least: 5.9
-Tested up to: 7.0
+Tested up to: 7.1
 WC requires at least: 3.0
-WC tested up to: 10.9
+WC tested up to: 11.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 */
 
 defined( 'ABSPATH' ) || exit;
 
-! defined( 'WOOPQ_VERSION' ) && define( 'WOOPQ_VERSION', '6.0.3' );
+! defined( 'WOOPQ_VERSION' ) && define( 'WOOPQ_VERSION', '6.0.4' );
 ! defined( 'WOOPQ_LITE' ) && define( 'WOOPQ_LITE', __FILE__ );
 ! defined( 'WOOPQ_FILE' ) && define( 'WOOPQ_FILE', __FILE__ );
 ! defined( 'WOOPQ_URI' ) && define( 'WOOPQ_URI', plugin_dir_url( __FILE__ ) );
