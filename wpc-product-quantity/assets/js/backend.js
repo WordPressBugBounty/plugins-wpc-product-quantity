@@ -6,6 +6,7 @@
         init_terms();
         init_roles();
         init_sortable();
+        init_simulator();
     });
 
     $(document).on('change',
@@ -73,7 +74,8 @@
 
     $(document).on('click touch', '.woopq-item-header', function (e) {
         if (($(e.target).closest('.woopq-item-duplicate').length === 0) &&
-            ($(e.target).closest('.woopq-item-remove').length === 0)) {
+            ($(e.target).closest('.woopq-item-remove').length === 0) &&
+            ($(e.target).closest('.woopq-item-summary').length === 0)) {
             $(this).closest('.woopq-item').toggleClass('active');
         }
     });
@@ -84,6 +86,105 @@
 
         if (r == true) {
             $(this).closest('.woopq-item').remove();
+        }
+    });
+
+    $(document).on('click touch', '.woopq-item-summary', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        var $item = $(this).closest('.woopq-item');
+        var key = $item.find('.woopq-item-name-key').text().replace('#', '').trim();
+        var ruleName = '#' + key;
+
+        var isOverride = $item.closest('.woopq_product_settings').length > 0;
+
+        // Apply for
+        var applyInc = $item.find('[name$="[apply_inc]"]').val() === 'all' ? 'Include all' : 'Include either';
+        var applyText = $item.find('.woopq-item-name-apply').text().trim();
+
+        // User roles
+        var rolesInc = $item.find('[name$="[roles_inc]"]').val() === 'all' ? 'Include all' : 'Include either';
+        var rolesText = [];
+        $item.find('.woopq_roles_select option:selected').each(function () {
+            rolesText.push($(this).text().trim());
+        });
+
+        // Type & Values
+        var typeText = $item.find('.woopq_type option:selected').text().trim();
+        var typeVal = $item.find('.woopq_type').val();
+
+        var min = $item.find('input[name$="[min]"]').val();
+        var step = $item.find('input[name$="[step]"]').val();
+        var max = $item.find('input[name$="[max]"]').val();
+        var defVal = $item.find('input[name$="[value]"]').val();
+        var values = $item.find('textarea[name$="[values]"]').val();
+
+        // Build HTML
+        var html = '<div class="woopq-sum-section">';
+        html += '<div class="woopq-sum-status active"><span class="woopq-sum-dot"></span> Active</div>';
+        if (key && key !== 'default') {
+            html += '<div class="woopq-sum-badge">#' + key + '</div>';
+        }
+        html += '</div>';
+
+        if (!isOverride && key !== 'default') {
+            html += '<div class="woopq-sum-section">';
+            html += '<div class="woopq-sum-label">Apply for</div>';
+            if (applyText === 'all products' || applyText === '') {
+                html += '<div class="woopq-sum-detail"><strong class="woopq-sum-type">' + applyText + '</strong></div>';
+            } else {
+                html += '<div class="woopq-sum-detail"><strong class="woopq-sum-type">' + applyInc + '</strong> (' + applyText + ')</div>';
+            }
+            html += '</div>';
+        }
+
+        html += '<div class="woopq-sum-section">';
+        html += '<div class="woopq-sum-label">User roles</div>';
+        html += '<div class="woopq-sum-detail"><strong class="woopq-sum-type">' + rolesInc + '</strong>';
+        if (rolesText.length > 0) {
+            html += ' (' + rolesText.join(', ') + ')';
+        }
+        html += '</div></div>';
+
+        html += '<div class="woopq-sum-section">';
+        html += '<div class="woopq-sum-label">Quantity Settings</div>';
+        html += '<div class="woopq-sum-detail"><span><strong>Type:</strong> ' + typeText + '</span></div>';
+        if (typeVal === 'default') {
+            html += '<div class="woopq-sum-detail">';
+            html += '<span><strong>Min:</strong> ' + (min !== '' ? min : '0') + '</span> &bull; ';
+            html += '<span><strong>Step:</strong> ' + (step !== '' ? step : '1') + '</span> &bull; ';
+            html += '<span><strong>Max:</strong> ' + (max !== '' ? max : '&infin;') + '</span> &bull; ';
+            html += '<span><strong>Default:</strong> ' + (defVal !== '' ? defVal : '0') + '</span>';
+            html += '</div>';
+        } else {
+            html += '<div class="woopq-sum-detail"><pre style="margin-top: 5px; background: #f1f5f9; padding: 10px; border-radius: 4px; font-size: 12px; white-space: pre-wrap; font-family: monospace;">' + values + '</pre></div>';
+        }
+        html += '</div>';
+
+        if ($('#woopq-summary-modal').length === 0) {
+            $('body').append('<div id="woopq-summary-modal"><div class="woopq-summary-content"></div></div>');
+        }
+
+        $('#woopq-summary-modal').attr('title', 'Rule Summary ' + ruleName).find('.woopq-summary-content').html(html);
+        if ($.fn.dialog) {
+            $('#woopq-summary-modal').dialog({
+                modal: true,
+                width: 520,
+                dialogClass: 'wpc-dialog woopq-dialog woopq-summary-dialog',
+                open: function () {
+                    $('.ui-widget-overlay').bind('click', function () {
+                        $('#woopq-summary-modal').dialog('close');
+                    });
+                },
+                buttons: {
+                    'Close': function () {
+                        $(this).dialog('close');
+                    }
+                }
+            });
+        } else {
+            alert("Dialog not loaded!");
         }
     });
 
@@ -182,6 +283,102 @@
 
             $(this).closest('.woopq_settings_form').find('.woopq_show_if_type').hide();
             $(this).closest('.woopq_settings_form').find('.woopq_show_if_type_' + _val).show();
+        });
+    }
+
+    $(document).on('click', '.woopq_expand_all', function (e) {
+        e.preventDefault();
+        $('.woopq-item').addClass('active');
+    });
+
+    $(document).on('click', '.woopq_collapse_all', function (e) {
+        e.preventDefault();
+        $('.woopq-item').removeClass('active');
+    });
+
+    // ──── Simulator ─────────────────────────────────────────────
+    function init_simulator() {
+        if ($('#woopq-sim-product').length) {
+            $('#woopq-sim-product').select2({
+                ajax: {
+                    url: ajaxurl,
+                    dataType: 'json',
+                    delay: 250,
+                    data: function (params) {
+                        return {
+                            term: params.term,
+                            action: 'woocommerce_json_search_products_and_variations',
+                            security: typeof woocommerce_admin_meta_boxes !== 'undefined' ?
+                                woocommerce_admin_meta_boxes.search_products_nonce :
+                                (typeof woopq_admin_vars !== 'undefined' ? woopq_admin_vars.search_nonce : '')
+                        };
+                    },
+                    processResults: function (data) {
+                        var terms = [];
+                        if (data) {
+                            $.each(data, function (id, text) {
+                                terms.push({
+                                    id: id,
+                                    text: text
+                                });
+                            });
+                        }
+                        return {
+                            results: terms
+                        };
+                    },
+                    cache: true
+                },
+                minimumInputLength: 3
+            });
+        }
+
+        $(document).on('click touch', '#woopq-sim-run', function (e) {
+            e.preventDefault();
+
+            var $btn = $(this);
+            var product_id = $('#woopq-sim-product').val();
+            var role = $('#woopq-sim-role').val();
+            var $results = $('#woopq-sim-results');
+            var $spinner = $('#woopq-sim-spinner');
+
+            if (!product_id) {
+                alert('Please select a product to simulate.');
+                return;
+            }
+
+            $btn.prop('disabled', true);
+            $spinner.addClass('is-active');
+            $results.slideUp().empty();
+
+            $.post(ajaxurl, {
+                action: 'woopq_simulate',
+                nonce: woopq_admin_vars.nonce,
+                product_id: product_id,
+                role: role
+            }, function (response) {
+                $btn.prop('disabled', false);
+                $spinner.removeClass('is-active');
+
+                if (response.success) {
+                    $results.html(response.data.html).slideDown();
+                } else {
+                    $results.html('<div style="color: #d63638; padding: 10px; background: #fcf0f1; border-left: 4px solid #d63638;">' + (response.data.message || 'An error occurred.') + '</div>').slideDown();
+                }
+            }).fail(function () {
+                $btn.prop('disabled', false);
+                $spinner.removeClass('is-active');
+                alert('AJAX error during simulation.');
+            });
+        });
+
+        $(document).on('click touch', '#woopq-sim-reset', function (e) {
+            e.preventDefault();
+            if ($('#woopq-sim-product').length) {
+                $('#woopq-sim-product').val(null).trigger('change');
+            }
+            $('#woopq-sim-role').val('woopq_guest');
+            $('#woopq-sim-results').slideUp().empty();
         });
     }
 })(jQuery);

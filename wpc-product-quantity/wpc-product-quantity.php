@@ -3,28 +3,27 @@
 Plugin Name: WPC Product Quantity for WooCommerce
 Plugin URI: https://wpclever.net/
 Description: WPC Product Quantity provides powerful controls for product quantity.
-Version: 6.0.4
 Author: WPClever
 Author URI: https://wpclever.net
 Text Domain: wpc-product-quantity
 Domain Path: /languages/
 Requires Plugins: woocommerce
+Version: 7.0.0
 Requires at least: 5.9
-Tested up to: 7.1
 WC requires at least: 3.0
-WC tested up to: 11.0
+WC tested up to: 11.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 */
 
 defined( 'ABSPATH' ) || exit;
 
-! defined( 'WOOPQ_VERSION' ) && define( 'WOOPQ_VERSION', '6.0.4' );
+! defined( 'WOOPQ_VERSION' ) && define( 'WOOPQ_VERSION', '7.0.0' );
 ! defined( 'WOOPQ_LITE' ) && define( 'WOOPQ_LITE', __FILE__ );
 ! defined( 'WOOPQ_FILE' ) && define( 'WOOPQ_FILE', __FILE__ );
 ! defined( 'WOOPQ_URI' ) && define( 'WOOPQ_URI', plugin_dir_url( __FILE__ ) );
 ! defined( 'WOOPQ_DIR' ) && define( 'WOOPQ_DIR', plugin_dir_path( __FILE__ ) );
-! defined( 'WOOPQ_SUPPORT' ) && define( 'WOOPQ_SUPPORT', 'https://wpclever.net/support?utm_source=support&utm_medium=woopq&utm_campaign=wporg' );
+! defined( 'WOOPQ_SUPPORT' ) && define( 'WOOPQ_SUPPORT', 'https://wpclever.net/support/?utm_source=support&utm_medium=woopq&utm_campaign=wporg' );
 ! defined( 'WOOPQ_REVIEWS' ) && define( 'WOOPQ_REVIEWS', 'https://wordpress.org/support/plugin/wpc-product-quantity/reviews/' );
 ! defined( 'WOOPQ_CHANGELOG' ) && define( 'WOOPQ_CHANGELOG', 'https://wordpress.org/plugins/wpc-product-quantity/#developers' );
 ! defined( 'WOOPQ_DISCUSSION' ) && define( 'WOOPQ_DISCUSSION', 'https://wordpress.org/support/plugin/wpc-product-quantity' );
@@ -592,7 +591,7 @@ if ( ! function_exists( 'woopq_init' ) ) {
 				 *
 				 * @return array
 				 */
-				private static function get_default_rule() {
+				public static function get_default_rule() {
 					return [
 						'apply'     => 'woopq_all',
 						'apply_val' => [],

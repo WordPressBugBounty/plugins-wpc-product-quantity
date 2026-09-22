@@ -98,8 +98,36 @@ body.rtl .woopq_active {
 /* Rules */
 
 .woopq-add-rule {
+  margin-top: 16px;
+  display: flex;
+  align-items: center;
+
+  .woopq-add-rule-btn,
   .button {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    background: #fff !important;
+    border: 1px solid var(--woopq-border, #e2e8f0) !important;
+    color: var(--woopq-text, #1e293b) !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    padding: 8px 16px !important;
+    height: auto !important;
+    line-height: normal !important;
+    border-radius: 8px !important;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) !important;
+    cursor: pointer;
+    transition: all 0.2s ease;
     margin-left: 0 !important;
+    text-decoration: none;
+
+    &:hover {
+      background: #f8fafc !important;
+      border-color: #cbd5e1 !important;
+      color: var(--woopq-primary, #10b981) !important;
+    }
   }
 }
 
@@ -261,6 +289,10 @@ body.rtl .woopq_active {
         padding: 15px 0;
         border-bottom: 1px solid #eee;
 
+        &:first-child {
+          padding-top: 0;
+        }
+
         &.woopq-item-line-hide {
           display: none;
         }
@@ -394,3 +426,50 @@ body.rtl .woopq_active {
     }
   }
 }
+
+.woopq-settings textarea, .woopq-settings .select2-container .select2-selection {
+  width: 100%;
+  border-radius: 6px;
+  border: 1px solid var(--woopq-border, #e2e8f0);
+}
+
+.woopq-settings textarea {
+  min-height: 120px;
+
+  &:focus {
+    border-color: var(--woopq-primary);
+    box-shadow: 0 0 0 1px var(--woopq-primary);
+    outline: none;
+  }
+}
+
+.woopq-item .woopq-item-header {
+  height: 28px;
+}
+
+.woopq_product_settings {
+  .woopq-section-header {
+    margin-top: 14px;
+    margin-bottom: 14px;
+
+    .woopq-section-title {
+      font-size: 15px;
+      font-weight: 700;
+      margin: 0 0 4px;
+      padding: 0;
+      color: var(--woopq-text, #1e293b);
+    }
+
+    .woopq-section-desc {
+      font-size: 13px;
+      color: var(--woopq-muted, #64748b);
+      margin: 0;
+    }
+  }
+
+  .woopq-section-divider {
+    border: 0;
+    border-top: 1px dashed var(--woopq-border, #dddddd);
+    margin: 20px 0;
+  }
+}
